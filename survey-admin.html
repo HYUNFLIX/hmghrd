@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>설문 관리자 | 현대자동차</title>
+  <link rel="icon" href="/assets/favicon.ico" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:      #003087;
+      --blue-mid:  #0050b3;
+      --blue-light:#e8efff;
+      --bg:        #f0f2f5;
+      --surface:   #ffffff;
+      --border:    #d1d5db;
+      --text:      #111827;
+      --muted:     #6b7280;
+      --success:   #16a34a;
+      --error:     #dc2626;
+      --warning:   #d97706;
+      --radius:    8px;
+      --sidebar-w: 220px;
+      --header-h:  56px;
+    }
+
+    body { font-family: 'Pretendard','Apple SD Gothic Neo','Noto Sans KR',-apple-system,sans-serif; background:var(--bg); color:var(--text); }
+
+    /* ── Login ───────────────────────────────────────────────── */
+    .login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #001a4d 0%, #003087 60%, #0050b3 100%);
+    }
+    .login-card {
+      background: var(--surface); border-radius: 16px; padding: 48px 40px;
+      width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    .login-logo { margin-bottom: 24px; }
+    .login-logo svg { width: 64px; height: 44px; }
+    .login-card h1 { font-size: 1.3rem; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
+    .login-card p { font-size: 0.9rem; color: var(--muted); margin-bottom: 28px; }
+    .login-input {
+      width: 100%; padding: 12px 16px; border: 1.5px solid var(--border);
+      border-radius: var(--radius); font-size: 1rem; font-family: inherit;
+      outline: none; text-align: center; letter-spacing: 0.2em; margin-bottom: 12px;
+      transition: border-color 0.15s;
+    }
+    .login-input:focus { border-color: var(--blue); }
+    .btn-primary {
+      width: 100%; padding: 12px; background: var(--blue); color: #fff;
+      border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.88; }
+    .login-error {
+      color: var(--error); font-size: 0.85rem; margin-top: 10px;
+    }
+
+    /* ── Admin app shell ─────────────────────────────────────── */
+    #admin-app { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Header */
+    .admin-header {
+      height: var(--header-h); background: var(--blue); color: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .menu-toggle {
+      background: none; border: none; color: #fff; font-size: 1.2rem;
+      cursor: pointer; padding: 4px; display: none;
+    }
+    .app-title { font-weight: 700; font-size: 1rem; white-space: nowrap; }
+    .header-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .header-badge {
+      background: rgba(255,255,255,0.15); border-radius: 20px;
+      padding: 4px 12px; font-size: 0.82rem; white-space: nowrap;
+    }
+    .header-badge strong { font-size: 1rem; margin-left: 4px; }
+    .btn-ghost {
+      background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);
+      color: #fff; border-radius: var(--radius); padding: 6px 14px;
+      font-size: 0.85rem; cursor: pointer; transition: background 0.15s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.22); }
+
+    /* Body */
+    .admin-body { display: flex; flex: 1; overflow: hidden; }
+
+    /* Sidebar */
+    .admin-sidebar {
+      width: var(--sidebar-w); background: #001a4d; flex-shrink: 0;
+      display: flex; flex-direction: column; padding: 16px 0;
+      min-height: calc(100vh - var(--header-h));
+    }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 2px; padding: 0 8px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 10px 14px; background: none; border: none; color: rgba(255,255,255,0.7);
+      font-size: 0.92rem; font-family: inherit; border-radius: var(--radius);
+      cursor: pointer; text-align: left; transition: background 0.15s, color 0.15s;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 600; }
+    .nav-icon { font-size: 1rem; }
+    .sidebar-divider { border-color: rgba(255,255,255,0.1); margin: 10px 16px; }
+
+    /* Main content */
+    .admin-main {
+      flex: 1; overflow-y: auto; padding: 28px 24px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+
+    /* ── Tabs ────────────────────────────────────────────────── */
+    .tab-content { display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── Cards ───────────────────────────────────────────────── */
+    .card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.07); padding: 24px;
+    }
+    .card-title {
+      font-size: 1rem; font-weight: 700; color: var(--blue);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ── Stats grid ──────────────────────────────────────────── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .stat-card {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 20px; box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+      border-left: 4px solid var(--blue);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .stat-card.green  { border-left-color: var(--success); }
+    .stat-card.orange { border-left-color: var(--warning); }
+    .stat-card.gray   { border-left-color: var(--muted); }
+    .stat-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1; }
+    .stat-sub   { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── Overview layout ─────────────────────────────────────── */
+    .overview-row { display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+    .chart-wrapper { height: 240px; position: relative; }
+
+    /* ── QR section ──────────────────────────────────────────── */
+    .qr-panel { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .qr-canvas-wrapper {
+      background: #fff; padding: 12px; border-radius: 8px;
+      border: 2px solid var(--blue-light);
+    }
+    .survey-url-box {
+      background: var(--bg); border-radius: var(--radius); padding: 10px 14px;
+      font-size: 0.78rem; color: var(--muted); word-break: break-all;
+      text-align: center; width: 100%;
+    }
+    .qr-actions { display: flex; gap: 8px; width: 100%; }
+    .btn-sm {
+      flex: 1; padding: 8px 10px; border-radius: var(--radius);
+      font-size: 0.83rem; font-weight: 600; cursor: pointer; border: none;
+      transition: opacity 0.15s;
+    }
+    .btn-sm:hover { opacity: 0.85; }
+    .btn-blue { background: var(--blue); color: #fff; }
+    .btn-outline { background: #fff; color: var(--blue); border: 1.5px solid var(--blue); }
+
+    /* ── Analytics cards ─────────────────────────────────────── */
+    .analytics-grid { display: flex; flex-direction: column; gap: 16px; }
+    .analytics-card {
+      background: var(--surface); border-radius: var(--radius);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.07); padding: 24px; overflow: hidden;
+    }
+    .analytics-card-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 8px; flex-wrap: wrap; gap: 8px;
+    }
+    .q-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .q-badge {
+      background: var(--blue); color: #fff;
+      font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 12px;
+    }
+    .q-type-badge {
+      background: var(--blue-light); color: var(--blue);
+      font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 12px;
+    }
+    .q-required-badge {
+      background: #fef2f2; color: var(--error);
+      font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 12px;
+    }
+    .q-response-rate { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+    .analytics-q-title { font-size: 1rem; font-weight: 600; margin-bottom: 16px; line-height: 1.4; }
+    .analytics-chart-area { min-height: 60px; }
+    .analytics-insight {
+      margin-top: 12px; padding: 10px 14px; background: var(--blue-light);
+      border-radius: var(--radius); font-size: 0.88rem; color: var(--blue);
+      line-height: 1.5;
+    }
+    .analytics-insight:empty { display: none; }
+    .rating-avg {
+      font-size: 1.1rem; color: var(--muted); margin-bottom: 12px;
+    }
+    .rating-avg strong { font-size: 1.6rem; color: var(--blue); }
+
+    /* Text responses */
+    .text-responses { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; }
+    .text-response-item {
+      display: flex; gap: 12px; padding: 10px 14px;
+      background: var(--bg); border-radius: var(--radius); align-items: flex-start;
+    }
+    .text-response-num {
+      min-width: 24px; height: 24px; background: var(--blue); color: #fff;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+    }
+    .text-response-content { font-size: 0.9rem; line-height: 1.5; }
+
+    /* ── Responses table ─────────────────────────────────────── */
+    .responses-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .search-input {
+      padding: 9px 14px; border: 1.5px solid var(--border); border-radius: var(--radius);
+      font-size: 0.9rem; font-family: inherit; outline: none; min-width: 220px;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: var(--blue); }
+    .response-count { font-size: 0.88rem; color: var(--muted); }
+    .table-wrapper { overflow-x: auto; border-radius: var(--radius); }
+    .responses-table {
+      width: 100%; border-collapse: collapse; font-size: 0.88rem; white-space: nowrap;
+    }
+    .responses-table th {
+      background: var(--blue); color: #fff; font-weight: 600;
+      padding: 10px 14px; text-align: left; position: sticky; top: 0;
+    }
+    .responses-table td {
+      padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top;
+    }
+    .responses-table tr:last-child td { border-bottom: none; }
+    .responses-table tr:hover td { background: var(--blue-light); }
+    .nowrap { white-space: nowrap; }
+    .pagination { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+    .page-btn {
+      min-width: 36px; height: 36px; padding: 0 10px; border: 1.5px solid var(--border);
+      border-radius: var(--radius); background: #fff; font-size: 0.88rem;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .page-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .page-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    /* ── Export tab ──────────────────────────────────────────── */
+    .export-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .export-card {
+      background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 24px; display: flex; flex-direction: column; gap: 12px;
+      transition: border-color 0.15s;
+    }
+    .export-card:hover { border-color: var(--blue); }
+    .export-icon { font-size: 2rem; }
+    .export-title { font-weight: 700; font-size: 1rem; }
+    .export-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+    .btn-export {
+      padding: 10px 20px; border-radius: var(--radius); font-size: 0.92rem;
+      font-weight: 600; cursor: pointer; border: none; transition: opacity 0.15s;
+    }
+    .btn-export:hover { opacity: 0.85; }
+    .btn-export.csv  { background: var(--success); color: #fff; }
+    .btn-export.json { background: var(--warning); color: #fff; }
+    .btn-export.copy { background: var(--blue); color: #fff; }
+
+    /* ── Shared utilities ────────────────────────────────────── */
+    .no-data { color: var(--muted); font-size: 0.9rem; padding: 20px 0; }
+    .live-dot {
+      width: 8px; height: 8px; background: #22c55e; border-radius: 50%;
+      display: inline-block; animation: blink 1.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .overview-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      :root { --sidebar-w: 0px; }
+      .menu-toggle { display: flex; }
+      .admin-sidebar {
+        position: fixed; top: var(--header-h); left: -240px; width: 240px;
+        z-index: 200; transition: left 0.25s; min-height: calc(100vh - var(--header-h));
+      }
+      .admin-sidebar.open { left: 0; box-shadow: 4px 0 20px rgba(0,0,0,0.3); }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .admin-main { padding: 16px; }
+      .app-title { font-size: 0.88rem; }
+    }
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Login ──────────────────────────────────────────────────────────────── -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 0C44.8 0 0 22.4 0 50s44.8 50 100 50 100-22.4 100-50S155.2 0 100 0zm-4.2 72.6L59.4 27.4h16.2l24 32.8 24-32.8h16.2L104.2 72.6H95.8z" fill="#003087"/>
+      </svg>
+    </div>
+    <h1>관리자 로그인</h1>
+    <p>설문 관리자 PIN을 입력하세요</p>
+    <form id="login-form">
+      <input type="password" id="pin-input" class="login-input" placeholder="● ● ● ● ● ●" autocomplete="current-password" />
+      <button type="submit" class="btn-primary">로그인</button>
+      <p id="login-error" class="login-error" hidden>PIN이 올바르지 않습니다.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ── Admin App ───────────────────────────────────────────────────────────── -->
+<div id="admin-app" hidden>
+
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="header-left">
+      <button class="menu-toggle" id="menu-toggle" aria-label="메뉴">☰</button>
+      <span class="app-title">현대자동차 교육 사전설문 · 관리자</span>
+    </div>
+    <div class="header-right">
+      <span class="live-dot" title="실시간 연동 중"></span>
+      <span class="header-badge">총 응답 <strong id="header-total">0</strong></span>
+      <span class="header-badge">오늘 <strong id="header-today">0</strong></span>
+      <span class="header-badge" id="header-last-badge" style="display:none">최근 <strong id="header-last">—</strong></span>
+      <button class="btn-ghost" id="logout-btn">로그아웃</button>
+    </div>
+  </header>
+
+  <div class="admin-body">
+
+    <!-- Sidebar -->
+    <nav class="admin-sidebar" id="sidebar">
+      <ul class="nav-list">
+        <li>
+          <button class="nav-item active" data-tab="overview">
+            <span class="nav-icon">📊</span> 개요
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-tab="analytics">
+            <span class="nav-icon">📈</span> 문항 분석
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-tab="responses">
+            <span class="nav-icon">📋</span> 응답 목록
+          </button>
+        </li>
+        <hr class="sidebar-divider" />
+        <li>
+          <button class="nav-item" data-tab="export">
+            <span class="nav-icon">💾</span> 내보내기
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main content -->
+    <main class="admin-main">
+
+      <!-- ── 개요 ──────────────────────────────────────────── -->
+      <section id="tab-overview" class="tab-content">
+
+        <!-- Stats cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">총 응답 수</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-sub">누적</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">오늘 응답</div>
+            <div class="stat-value" id="stat-today">0</div>
+            <div class="stat-sub" id="stat-today-date">—</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-label">완료율</div>
+            <div class="stat-value" id="stat-completion">—</div>
+            <div class="stat-sub">필수 항목 기준</div>
+          </div>
+          <div class="stat-card gray">
+            <div class="stat-label">최근 응답</div>
+            <div class="stat-value" style="font-size:1.1rem;padding-top:6px" id="stat-last">—</div>
+            <div class="stat-sub">경과 시간</div>
+          </div>
+        </div>
+
+        <!-- Timeline + QR -->
+        <div class="overview-row">
+          <div class="card">
+            <div class="card-title">📅 응답 추이 (최근 14일)</div>
+            <div class="chart-wrapper">
+              <canvas id="timeline-chart"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📱 설문 QR 코드</div>
+            <div class="qr-panel">
+              <div class="qr-canvas-wrapper">
+                <canvas id="qr-canvas"></canvas>
+              </div>
+              <div class="survey-url-box" id="survey-url-display">—</div>
+              <div class="qr-actions">
+                <button class="btn-sm btn-blue" id="download-qr">⬇ QR 저장</button>
+                <button class="btn-sm btn-outline" id="copy-url">🔗 URL 복사</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ── 문항 분석 ──────────────────────────────────────── -->
+      <section id="tab-analytics" class="tab-content" hidden>
+        <div class="analytics-grid" id="analytics-container">
+          <p class="no-data">데이터를 불러오는 중...</p>
+        </div>
+      </section>
+
+      <!-- ── 응답 목록 ──────────────────────────────────────── -->
+      <section id="tab-responses" class="tab-content" hidden>
+        <div class="card" style="gap:16px;display:flex;flex-direction:column">
+          <div class="responses-toolbar">
+            <div style="display:flex;align-items:center;gap:12px">
+              <input type="text" id="response-search" class="search-input" placeholder="🔍 응답 내용 검색..." />
+              <span class="response-count" id="response-count">0개 응답</span>
+            </div>
+          </div>
+          <div id="responses-table-container">
+            <p class="no-data">아직 응답이 없습니다.</p>
+          </div>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </section>
+
+      <!-- ── 내보내기 ───────────────────────────────────────── -->
+      <section id="tab-export" class="tab-content" hidden>
+        <div class="card">
+          <div class="card-title">💾 데이터 내보내기</div>
+          <div class="export-grid">
+
+            <div class="export-card">
+              <div class="export-icon">📊</div>
+              <div class="export-title">CSV 내보내기</div>
+              <div class="export-desc">엑셀(Excel)에서 바로 열 수 있는 CSV 파일로 전체 응답을 다운로드합니다. BOM이 포함되어 한글이 깨지지 않습니다.</div>
+              <button class="btn-export csv" id="export-csv">CSV 다운로드</button>
+            </div>
+
+            <div class="export-card">
+              <div class="export-icon">🗂</div>
+              <div class="export-title">JSON 내보내기</div>
+              <div class="export-desc">원본 데이터 구조 그대로 JSON 파일로 다운로드합니다. 개발자나 추가 데이터 분석 시 활용하세요.</div>
+              <button class="btn-export json" id="export-json">JSON 다운로드</button>
+            </div>
+
+            <div class="export-card">
+              <div class="export-icon">📋</div>
+              <div class="export-title">요약 클립보드 복사</div>
+              <div class="export-desc">각 질문의 응답 통계를 텍스트 요약으로 클립보드에 복사합니다. 보고서 작성 시 빠르게 활용하세요.</div>
+              <button class="btn-export copy" id="export-summary">요약 복사</button>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script type="module" src="./src/survey-admin.ts"></script>
+</body>
+</html>

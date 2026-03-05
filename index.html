@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMG HRD Hackathon 2026 - AI 기반 솔루션 기획 기본 과정</title>
+    <style>
+        /* Pretendard Font */
+        @font-face {
+            font-family: 'Pretendard';
+            font-weight: 900;
+            font-display: swap;
+            src: url('https://ext.same-assets.com/123563734/1514056499.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Pretendard';
+            font-weight: 800;
+            font-display: swap;
+            src: url('https://ext.same-assets.com/123563734/984785649.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Pretendard';
+            font-weight: 700;
+            font-display: swap;
+            src: url('https://ext.same-assets.com/123563734/847981925.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Pretendard';
+            font-weight: 600;
+            font-display: swap;
+            src: url('https://ext.same-assets.com/123563734/2100512654.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Pretendard';
+            font-weight: 500;
+            font-display: swap;
+            src: url('https://ext.same-assets.com/123563734/3602638983.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Pretendard';
+            font-weight: 400;
+            font-display: swap;
+            src: url('https://ext.same-assets.com/123563734/2719654046.woff2') format('woff2');
+        }
+        @font-face {
+            font-family: 'Pretendard';
+            font-weight: 300;
+            font-display: swap;
+            src: url('https://ext.same-assets.com/123563734/1578360979.woff2') format('woff2');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            color: #2d3748;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(25, 38, 60, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .logo-hmg {
+            color: white;
+        }
+
+        .logo-learning {
+            color: #5fb1eb;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #0a3a7a;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #083061;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            border-radius: 9999px;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #19263c 0%, #1e3047 50%, #19263c 100%);
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .floating-orb {
+            position: absolute;
+            background: rgba(95, 177, 235, 0.1);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            top: 5rem;
+            left: 2.5rem;
+            width: 8rem;
+            height: 8rem;
+        }
+
+        .orb-2 {
+            top: 10rem;
+            right: 5rem;
+            width: 10rem;
+            height: 10rem;
+            animation-delay: 1s;
+        }
+
+        .orb-3 {
+            bottom: 8rem;
+            left: 25%;
+            width: 9rem;
+            height: 9rem;
+            animation-delay: 2s;
+        }
+
+        .orb-4 {
+            bottom: 5rem;
+            right: 33%;
+            width: 11rem;
+            height: 11rem;
+            animation-delay: 3s;
+        }
+
+        .dot {
+            position: absolute;
+            width: 0.5rem;
+            height: 0.5rem;
+            background: rgba(95, 177, 235, 0.3);
+            border-radius: 50%;
+            animation: pulse-slow 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+        }
+
+        .badge-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background: #5fb1eb;
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 4.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero .highlight {
+            color: #5fb1eb;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: #cbd5e0;
+            margin-bottom: 1rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 3rem 0 2rem;
+        }
+
+        /* Section */
+        section {
+            padding: 5rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-header .underline {
+            width: 5rem;
+            height: 0.25rem;
+            background: #5fb1eb;
+            margin: 0 auto 1.5rem;
+        }
+
+        .section-header p {
+            font-size: 1.125rem;
+            color: #718096;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            background: rgba(95, 177, 235, 0.1);
+            border: 1px solid rgba(95, 177, 235, 0.2);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #5fb1eb;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: rgba(95, 177, 235, 0.3);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 12rem;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .card:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-icon {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 3rem;
+            height: 3rem;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon img {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .card p {
+            color: #718096;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            background: #f7fafc;
+            color: #718096;
+            font-size: 0.75rem;
+            border-radius: 9999px;
+        }
+
+        /* Why Now Section */
+        .why-now {
+            background: white;
+        }
+
+        .why-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .why-text h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #19263c;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-number {
+            flex-shrink: 0;
+            width: 3rem;
+            height: 3rem;
+            background: #f7fafc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #cbd5e0;
+            font-weight: 700;
+        }
+
+        .feature h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature p {
+            color: #718096;
+        }
+
+        .why-image {
+            position: relative;
+        }
+
+        .mockup {
+            background: linear-gradient(135deg, #f7fafc 0%, #e2e8f0 100%);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .mockup img {
+            width: 100%;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .prompt-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .prompt-header img {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .prompt-header span {
+            color: #5fb1eb;
+            font-weight: 700;
+        }
+
+        .prompt-text {
+            color: #718096;
+            font-size: 0.875rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Benefits */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .benefit-card {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .benefit-card:hover {
+            border-color: rgba(95, 177, 235, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-icon {
+            width: 4rem;
+            height: 4rem;
+            background: #0a3a7a;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .benefit-icon img {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .benefit-number {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 3.75rem;
+            font-weight: 700;
+            color: #f7fafc;
+        }
+
+        .benefit-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .benefit-card p {
+            color: #718096;
+        }
+
+        /* Timeline */
+        .timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .timeline-date {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-date h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-date .date {
+            color: #5fb1eb;
+            font-weight: 700;
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            background: white;
+            border: 2px solid rgba(95, 177, 235, 0.2);
+            border-radius: 0.5rem;
+            padding: 2rem;
+        }
+
+        .timeline-content h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .module-list {
+            list-style: none;
+        }
+
+        .module-list li {
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .module-list .module-title {
+            font-weight: 700;
+            display: inline;
+        }
+
+        .module-list .module-desc {
+            color: #718096;
+            font-size: 0.75rem;
+            display: block;
+            padding-left: 2rem;
+            margin-top: 0.25rem;
+        }
+
+        .day-title {
+            color: #5fb1eb;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .day-title:first-child {
+            margin-top: 0;
+        }
+
+        /* FAQ */
+        .faq {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .accordion-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            padding: 1.5rem;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-trigger:hover {
+            background: #f7fafc;
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+        }
+
+        .accordion-content-inner {
+            padding: 0 1.5rem 1.5rem;
+            color: #718096;
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        footer h3 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        footer .footer-hmg {
+            color: #19263c;
+        }
+
+        footer .footer-hrd {
+            color: #5fb1eb;
+        }
+
+        footer p {
+            color: #a0aec0;
+            font-size: 0.875rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #19263c 0%, #1e3047 50%, #19263c 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.25rem;
+            color: #cbd5e0;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-section .disclaimer {
+            font-size: 0.875rem;
+            color: #a0aec0;
+            margin-top: 2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .timeline-item {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .why-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-hmg">HMG</span>
+                    <span class="logo-learning">Learning Session</span>
+                </div>
+                <button class="btn btn-outline">참가 신청</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="floating-orb orb-1"></div>
+            <div class="floating-orb orb-2"></div>
+            <div class="floating-orb orb-3"></div>
+            <div class="floating-orb orb-4"></div>
+            
+            <div class="dot" style="top: 20%; left: 15%; animation-delay: 0s;"></div>
+            <div class="dot" style="top: 35%; left: 80%; animation-delay: 0.5s;"></div>
+            <div class="dot" style="top: 50%; left: 25%; animation-delay: 1s;"></div>
+            <div class="dot" style="top: 65%; left: 70%; animation-delay: 1.5s;"></div>
+            <div class="dot" style="top: 75%; left: 40%; animation-delay: 2s;"></div>
+            <div class="dot" style="top: 25%; left: 55%; animation-delay: 2.5s;"></div>
+            <div class="dot" style="top: 85%; left: 15%; animation-delay: 0.3s;"></div>
+            <div class="dot" style="top: 40%; left: 45%; animation-delay: 1.2s;"></div>
+            <div class="dot" style="top: 60%; left: 90%; animation-delay: 1.8s;"></div>
+            <div class="dot" style="top: 15%; left: 35%; animation-delay: 0.8s;"></div>
+        </div>
+
+        <div class="container">
+            <div class="hero-content">
+                <div class="badge">
+                    <div class="badge-dot"></div>
+                    <span>Learning Session</span>
+                </div>
+
+                <h1>
+                    AI 기반 솔루션 기획 기본 과정<br>
+                    <span class="highlight">2026</span>
+                </h1>
+
+                <p><strong>현대자동차그룹 HRD 담당자</strong>를 위한</p>
+                <p>국내 최초의 노코드 <span style="color: #5fb1eb; font-weight: 600;">AI 솔루션 해커톤</span>.</p>
+                <p style="font-size: 1.5rem; margin-top: 1rem;">
+                    Future Mobility를 넘어 <span style="color: #5fb1eb; font-weight: 600;">Future Learning</span>을 실현합니다.
+                </p>
+
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-lg">
+                        참가 신청하기
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-outline btn-lg">
+                        자세히 알아보기
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="badge">
+                    <div class="badge-dot"></div>
+                    <span>신청 마감: 3/16(토)까지</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Now Section -->
+    <section class="why-now">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why <span class="highlight">Now</span>?</h2>
+                <div class="underline"></div>
+                <p>Smart HRD로의 전환, 이제는 AI Native가 되어야 할 시간</p>
+            </div>
+
+            <div class="why-content">
+                <div class="why-text">
+                    <h3>현장의 아이디어를<br>AI 솔루션으로 구현</h3>
+
+                    <div class="feature">
+                        <div class="feature-number">01</div>
+                        <div>
+                            <h4>Efficiency</h4>
+                            <p>반복되는 교육 운영 업무와 데이터 분석, AI Agent를 통해 자동화하고 본질적인 교육 기획에 집중하세요.</p>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-number">02</div>
+                        <div>
+                            <h4>Vibe Coding</h4>
+                            <p>개발 지식이 없어도 괜찮습니다. Google AI Studio와 자연어 프롬프트만으로 실상하면 HRD 도구를 직접 개발합니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="why-image">
+                    <div class="mockup">
+                        <img src="https://ext.same-assets.com/123563734/3681171237.jpeg" alt="Coding">
+                        <div class="prompt-card">
+                            <div class="prompt-header">
+                                <img src="https://ext.same-assets.com/123563734/4232810924.svg" alt="Prompt">
+                                <span>PROMPT</span>
+                            </div>
+                            <p class="prompt-text">"Create an AI dashboard for HMG employee training progress. Visualize skills gap analysis."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expected Outcomes -->
+    <section style="background: #f7fafc;">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <img src="https://ext.same-assets.com/123563734/2092958437.svg" alt="" style="width: 1.25rem; height: 1.25rem;">
+                    <span>EXPECTED OUTCOMES</span>
+                </div>
+                <h2>HMG 맞춤형 AI 솔루션 예시</h2>
+                <p>실제 업무에 바로 적용 가능한 프로덕트를 개발합니다.</p>
+            </div>
+
+            <div class="grid grid-3">
+                <div class="card">
+                    <div style="position: relative; height: 12rem; overflow: hidden;">
+                        <img src="https://ext.same-assets.com/123563734/2358648187.jpeg" alt="HMG 온보딩 봇" class="card-image">
+                        <div class="card-icon">
+                            <img src="https://ext.same-assets.com/123563734/1344675756.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>HMG 온보딩 봇</h3>
+                        <p>그룹사 공통 구성원 복사 제도를 학습하여 신규 입사자의 질문에 즉각 응답하는 AI 챗봇</p>
+                        <div class="tags">
+                            <span class="tag">#RAG</span>
+                            <span class="tag">#Efficiency</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="position: relative; height: 12rem; overflow: hidden;">
+                        <img src="https://ext.same-assets.com/123563734/2546182577.jpeg" alt="교육 인사이트 보드" class="card-image">
+                        <div class="card-icon">
+                            <img src="https://ext.same-assets.com/123563734/4070470708.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>교육 인사이트 보드</h3>
+                        <p>교육 만족도 데이터를 강의 분석하고, 과정별 개선점을 도출하여 시각화하는 인텔리전트 대시보드</p>
+                        <div class="tags">
+                            <span class="tag">#Data_Analysis</span>
+                            <span class="tag">#Dashboard</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="position: relative; height: 12rem; overflow: hidden;">
+                        <img src="https://ext.same-assets.com/123563734/3883140540.jpeg" alt="세일즈 롤플레잉 AI" class="card-image">
+                        <div class="card-icon">
+                            <img src="https://ext.same-assets.com/123563734/838105221.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>세일즈 롤플레잉 AI</h3>
+                        <p>글로벌 세일즈 역량 강화를 위한 AI 파트너. 다국어 지원 및 즉각적인 피드백 제공</p>
+                        <div class="tags">
+                            <span class="tag">#Voice_AI</span>
+                            <span class="tag">#Global</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="position: relative; height: 12rem; overflow: hidden;">
+                        <img src="https://ext.same-assets.com/123563734/685333741.jpeg" alt="글로벌 비즈니스 컨컨" class="card-image">
+                        <div class="card-icon">
+                            <img src="https://ext.same-assets.com/123563734/4287009995.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>글로벌 비즈니스 컨컨</h3>
+                        <p>해외 주재원 및 글로벌 담당을 위한 실시간 통번역 및 비즈니스 문서(패키지) 코칭 AI 에이전트</p>
+                        <div class="tags">
+                            <span class="tag">#Global</span>
+                            <span class="tag">#Communication</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="position: relative; height: 12rem; overflow: hidden;">
+                        <img src="https://ext.same-assets.com/123563734/2300178472.jpeg" alt="역량 분석 패스파인더" class="card-image">
+                        <div class="card-icon">
+                            <img src="https://ext.same-assets.com/123563734/4249331078.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>역량 분석 패스파인더</h3>
+                        <p>개별별 역량 진단 데이터를 바탕으로 최적 학습 커리큘럼 설계 및 커리어 패스 제안</p>
+                        <div class="tags">
+                            <span class="tag">#Personalized</span>
+                            <span class="tag">#Career_Path</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="position: relative; height: 12rem; overflow: hidden;">
+                        <img src="https://ext.same-assets.com/123563734/2300178472.jpeg" alt="임직원 소통 데이터 분석" class="card-image">
+                        <div class="card-icon">
+                            <img src="https://ext.same-assets.com/123563734/3319909761.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3>임직원 소통 데이터(VoE) 분석 AI</h3>
+                        <p>사내 게시판 및 교육 피드백의 비정형 데이터 실시간으로 분석하여 인정발의 니즈와 조직 문화를 진단</p>
+                        <div class="tags">
+                            <span class="tag">#Insight</span>
+                            <span class="tag">#VOC_Analysis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section style="background: white;">
+        <div class="container">
+            <div class="section-header">
+                <h2>참가 <span class="highlight">혜택</span></h2>
+                <div class="underline"></div>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <img src="https://ext.same-assets.com/123563734/1277260943.svg" alt="">
+                    </div>
+                    <div class="benefit-number">01</div>
+                    <h3>AI 프로토타입 앱 보유</h3>
+                    <p>실제 현업에서 활용 가능한 맞춤 기반 AI 애플리케이션 URL을 확보하게 됩니다.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <img src="https://ext.same-assets.com/123563734/4185848069.svg" alt="">
+                    </div>
+                    <div class="benefit-number">02</div>
+                    <h3>AI Native 역량 내재화</h3>
+                    <p>바이브코딩 스킬과 자연어 코딩 기술을 습득하여, 향후 다양한 HRD 문제 해결에 응용할 수 있습니다.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <img src="https://ext.same-assets.com/123563734/3791045881.svg" alt="">
+                    </div>
+                    <div class="benefit-number">03</div>
+                    <h3>그룹사 HRD 네트워크</h3>
+                    <p>현대자동차그룹 각 계열사의 HRD 담당자들과 함께 고민을 나누고 협업하여 시너지를 창출합니다.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Program Schedule -->
+    <section style="background: #f7fafc;">
+        <div class="container">
+            <div class="section-header">
+                <h2>프로그램 <span class="highlight">일정</span></h2>
+                <div class="underline"></div>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date" style="text-align: right;">
+                        <h3>기본 과정</h3>
+                        <p class="date">2026.03.26 (목)</p>
+                        <p style="color: #718096;">Online Live (4H)</p>
+                    </div>
+
+                    <div class="timeline-content">
+                        <h4>HRD AI 기초 역량 강화</h4>
+                        <ul class="module-list">
+                            <li>
+                                <span class="module-title">M1</span> 바이브 코딩 & 일러는 방식의 변화
+                                <span class="module-desc">AI Studio 셋업 및 문서정리-생성-배포 프로세스 이해</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M2</span> [실습 1] 매뉴얼/테넌 검사 도구 만들기
+                                <span class="module-desc">Step-by-Step 따라하기 및 다녀감 실습</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M3</span> [실습 2] 설문 결과 자동 분석 앱
+                                <span class="module-desc">Google Sheets DB 연동 및 데이터 시각화</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M4</span> PRD 작성 가이드 & 과제 안내
+                                <span class="module-desc">실과 과정을 위한 문제정의서(PRD) 작성법</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">
+                        <h3>심화 과정</h3>
+                        <p class="date">2026.04.13 (월) ~ 14 (화)</p>
+                        <p style="color: #718096;">마복연수원 (16H)</p>
+                    </div>
+
+                    <div class="timeline-content">
+                        <h4>HRD AI 심화 실습과정</h4>
+                        
+                        <p class="day-title">Day 1 아이디어를 작동하는 프로토타입으로</p>
+                        <ul class="module-list">
+                            <li>
+                                <span class="module-title">M1</span> 팀 구성 & PRD 공유
+                                <span class="module-desc">아이스브레이킹 및 팀 빌딩</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M2</span> PRD 고도화 & 설계
+                                <span class="module-desc">기능 우선순위 정리 및 아이어프레임 스케치</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M3</span> Develop ① 핵심 기능 구현
+                                <span class="module-desc">프롬프트 전략 실전 적용 (큰 그림 → 세부화)</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M4</span> Develop ② 기능 확장
+                                <span class="module-desc">DB 연동 실습 및 디버깅 (MVP 완성)</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M5</span> Day 1 회고
+                                <span class="module-desc">진행 상황 공유 및 Day 2 역할 설정</span>
+                            </li>
+                        </ul>
+
+                        <p class="day-title">Day 2 완성하고, 보여주고, 다음을 설계하다</p>
+                        <ul class="module-list">
+                            <li>
+                                <span class="module-title">M1</span> Day 2 킥오프
+                                <span class="module-desc">마인드 활업 및 이슈 점검</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M2</span> UI/UX Styling
+                                <span class="module-desc">디자인 시스템 적용 및 반응형 확인</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M3</span> Cloud Deploy
+                                <span class="module-desc">클라우드 배포 및 코드스 테스트</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M4</span> 최종 완성
+                                <span class="module-desc">피드백 반영 및 발표 자료 준비</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M5</span> 결과 발표 & 심사
+                                <span class="module-desc">팀별 발표 및 동료/심사위원 평가</span>
+                            </li>
+                            <li>
+                                <span class="module-title">M6</span> 시상 & Next Step
+                                <span class="module-desc">우수 팀 시상 및 추후 지원 안내</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section style="background: white;">
+        <div class="container">
+            <div class="section-header">
+                <h2>자주 묻는 <span class="highlight">질문</span></h2>
+                <div class="underline"></div>
+            </div>
+
+            <div class="faq">
+                <div class="accordion-item">
+                    <button class="accordion-trigger">
+                        Q. 코딩을 못해도 참가할 수 있나요?
+                        <span class="accordion-icon">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            네, 물론입니다. 이 과정은 코딩 경험이 없는 HRD 담당자를 위해 설계되었습니다. AI를 활용한 바이브 코딩으로 자연어만으로도 솔루션을 개발할 수 있습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-trigger">
+                        Q. 참가 자격은 어떻게 되나요?
+                        <span class="accordion-icon">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            현대자동차그룹의 HRD 담당자라면 누구나 참가하실 수 있습니다. 교육 기획, 운영, 분석 업무를 담당하시는 분들께 특히 유용한 과정입니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Participation Guide -->
+    <section style="background: #f7fafc;">
+        <div class="container">
+            <div class="section-header">
+                <h2>참가 <span class="highlight">안내</span></h2>
+                <div class="underline"></div>
+            </div>
+
+            <div class="grid grid-2" style="max-width: 1000px; margin: 0 auto;">
+                <div class="card" style="border: 2px solid rgba(95, 177, 235, 0.2);">
+                    <div class="card-content" style="padding: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="width: 3rem; height: 3rem; background: rgba(95, 177, 235, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <img src="https://ext.same-assets.com/123563734/1277260943.svg" alt="" style="width: 1.5rem; height: 1.5rem;">
+                            </div>
+                            <h3><span class="highlight">01</span> 참가 자격</h3>
+                        </div>
+
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <img src="https://ext.same-assets.com/123563734/522681813.svg" alt="" style="width: 1.25rem; height: 1.25rem; margin-top: 0.25rem;">
+                            <div>
+                                <p style="font-weight: 700; margin-bottom: 0.25rem;">대상</p>
+                                <p style="color: #718096; font-size: 0.875rem;">현대자동차그룹 계열사 HRD 담당자</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <img src="https://ext.same-assets.com/123563734/522681813.svg" alt="" style="width: 1.25rem; height: 1.25rem; margin-top: 0.25rem;">
+                            <div>
+                                <p style="font-weight: 700; margin-bottom: 0.25rem;">구성</p>
+                                <p style="color: #718096; font-size: 0.875rem;">기본 - 개별 신청</p>
+                                <p style="color: #718096; font-size: 0.875rem;">심화 - 팀(2인) 참석 가능</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border: 2px solid rgba(95, 177, 235, 0.2);">
+                    <div class="card-content" style="padding: 2rem;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="width: 3rem; height: 3rem; background: rgba(95, 177, 235, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <img src="https://ext.same-assets.com/123563734/1809051825.svg" alt="" style="width: 1.5rem; height: 1.5rem;">
+                            </div>
+                            <h3><span class="highlight">02</span> 일시 및 장소</h3>
+                        </div>
+
+                        <div style="display: flex; align-items: start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <img src="https://ext.same-assets.com/123563734/2423002140.svg" alt="" style="width: 1.25rem; height: 1.25rem; margin-top: 0.25rem;">
+                            <div>
+                                <p style="font-weight: 700; margin-bottom: 0.25rem;">
+                                    기본 <span class="highlight">3/26(목)</span>
+                                </p>
+                                <p style="color: #718096; font-size: 0.875rem;">13:30 ~ 17:30 @ 온라인</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <img src="https://ext.same-assets.com/123563734/986188283.svg" alt="" style="width: 1.25rem; height: 1.25rem; margin-top: 0.25rem;">
+                            <div>
+                                <p style="font-weight: 700; margin-bottom: 0.25rem;">
+                                    심화 <span class="highlight">4/13(월) ~ 14(화)</span>
+                                </p>
+                                <p style="color: #718096; font-size: 0.875rem;">13:30 ~ 17:30 @ 마복연수원</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="hero-bg">
+            <div class="floating-orb" style="top: 5rem; left: 2.5rem; width: 10rem; height: 10rem;"></div>
+            <div class="floating-orb" style="bottom: 5rem; right: 2.5rem; width: 10rem; height: 10rem; animation-delay: 2s;"></div>
+        </div>
+
+        <div class="container">
+            <div class="cta-content">
+                <h2>
+                    Connect to<br>
+                    <span class="highlight">Future Learning</span>
+                </h2>
+
+                <p>현대자동차그룹 HRD의 새로운 챕터.</p>
+                <p style="margin-bottom: 3rem;">가장 먼저 경험하세요.</p>
+
+                <button class="btn btn-outline btn-lg" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
+                    지금 바로 신청하기
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+
+                <p class="disclaimer">* 신청은 마감 (기한: 개별 / 심화: 팀)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <h3>
+                <span class="footer-hmg">HMG</span>
+                <span class="footer-hrd">HRD Learning Session</span>
+            </h3>
+            <p>© 2026 REFERENCE HRD. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                const item = this.parentElement;
+                const wasActive = item.classList.contains('active');
+                
+                // Close all items
+                document.querySelectorAll('.accordion-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Open clicked item if it wasn't active
+                if (!wasActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 기반 솔루션 기획 기본 과정(3/26) 신청서</title>
+
+  <!-- Favicon — reuse the existing one -->
+  <link rel="icon" href="/assets/favicon.ico" />
+
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --hmc-blue:    #003087;   /* Hyundai brand blue */
+      --hmc-silver:  #6b7280;
+      --hmc-light:   #f0f4ff;
+      --bg:          #f5f7fa;
+      --surface:     #ffffff;
+      --border:      #d1d5db;
+      --text:        #111827;
+      --text-muted:  #6b7280;
+      --error:       #dc2626;
+      --success:     #16a34a;
+      --radius:      8px;
+      --shadow:      0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR',
+                   -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    .site-header {
+      background: var(--hmc-blue);
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .site-header img { height: 36px; }
+
+    .site-header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+
+    /* ── Survey header ────────────────────────────────────────── */
+    .survey-header {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 28px 24px;
+      margin-bottom: 24px;
+      border-top: 4px solid var(--hmc-blue);
+    }
+
+    .survey-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--hmc-blue);
+      margin-bottom: 12px;
+    }
+
+    .survey-header p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── Question block ───────────────────────────────────────── */
+    .question-block {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px 28px;
+      margin-bottom: 16px;
+      transition: border-left 0.2s;
+    }
+
+    .question-block.has-error {
+      border-left: 3px solid var(--error);
+    }
+
+    .question-title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .question-number {
+      color: var(--hmc-blue);
+      margin-right: 4px;
+    }
+
+    .required-mark { color: var(--error); }
+
+    .question-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
+
+    /* ── Option items (radio / checkbox) ──────────────────────── */
+    .options-group { display: flex; flex-direction: column; gap: 10px; }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .option-item:has(.option-input:checked) {
+      border-color: var(--hmc-blue);
+      background: var(--hmc-light);
+    }
+
+    .option-item:hover {
+      border-color: var(--hmc-blue);
+    }
+
+    .option-input { accent-color: var(--hmc-blue); width: 18px; height: 18px; cursor: pointer; }
+
+    .option-label { font-size: 0.95rem; cursor: pointer; user-select: none; }
+
+    /* ── Rating ───────────────────────────────────────────────── */
+    .rating-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .rating-input { display: none; }
+
+    .rating-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+
+    .rating-input:checked + .rating-label {
+      background: var(--hmc-blue);
+      border-color: var(--hmc-blue);
+      color: #fff;
+    }
+
+    .rating-label:hover {
+      border-color: var(--hmc-blue);
+      color: var(--hmc-blue);
+    }
+
+    /* ── Text inputs ──────────────────────────────────────────── */
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: var(--hmc-blue);
+      box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.12);
+    }
+
+    .form-textarea { resize: vertical; min-height: 100px; }
+
+    /* ── Error / Banner ───────────────────────────────────────── */
+    .field-error {
+      font-size: 0.82rem;
+      color: var(--error);
+      margin-top: 6px;
+      min-height: 18px;
+    }
+
+    #error-banner {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: var(--error);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+
+    /* ── Submit button ────────────────────────────────────────── */
+    .submit-area {
+      text-align: right;
+      margin-top: 8px;
+    }
+
+    #submit-btn {
+      background: var(--hmc-blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    #submit-btn:hover:not(:disabled) { opacity: 0.88; }
+    #submit-btn:active:not(:disabled) { transform: scale(0.98); }
+    #submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Status screens ───────────────────────────────────────── */
+    .status-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 48px 28px;
+      text-align: center;
+    }
+
+    .status-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .status-card h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--hmc-blue);
+    }
+
+    .status-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── Loading ──────────────────────────────────────────────── */
+    #loading {
+      text-align: center;
+      padding: 60px 0;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--hmc-blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .site-footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 40px;
+    }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .survey-header, .question-block { padding: 20px 16px; }
+      .site-header h1 { font-size: 1rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <!-- Replace src with the actual Hyundai logo asset if available -->
+    <div style="display:flex;align-items:center;gap:12px;">
+      <svg width="40" height="28" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Hyundai">
+        <path d="M100 0C44.8 0 0 22.4 0 50s44.8 50 100 50 100-22.4 100-50S155.2 0 100 0zm-4.2 72.6L59.4 27.4h16.2l24 32.8 24-32.8h16.2L104.2 72.6H95.8z" fill="white"/>
+      </svg>
+      <h1>현대자동차 사전 설문</h1>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Loading state -->
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>설문을 불러오는 중...</p>
+    </div>
+
+    <!-- Already submitted state -->
+    <div id="already-submitted" hidden>
+      <div class="status-card">
+        <div class="status-icon">✅</div>
+        <h2>이미 제출하셨습니다</h2>
+        <p>소중한 응답 감사합니다.<br>이미 이 설문에 참여하셨습니다.</p>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div id="success-message" hidden>
+      <div class="status-card">
+        <div class="status-icon">🎉</div>
+        <h2>답변이 성공적으로 제출되었습니다.</h2>
+        <p>
+          소중한 시간을 내어 참여해 주셔서 감사합니다.<br>
+          귀하의 의견 하나하나가 의미 있는 결과를 만드는 데 큰 힘이 됩니다.<br>
+          오늘도 행복한 하루 보내시기 바랍니다.<br><br>
+          <strong>감사합니다.</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Survey container -->
+    <div id="survey-container" hidden>
+
+      <!-- Survey header (title / description populated by JS) -->
+      <div class="survey-header">
+        <h2 id="survey-title"></h2>
+        <p id="survey-description"></p>
+      </div>
+
+      <!-- Error banner -->
+      <p id="error-banner" hidden></p>
+
+      <!-- Form -->
+      <form id="survey-form" novalidate>
+        <!-- Questions injected here by survey.ts -->
+        <div id="questions"></div>
+
+        <div class="submit-area">
+          <button type="submit" id="submit-btn">신청하기</button>
+        </div>
+      </form>
+
+    </div>
+
+    <footer class="site-footer">
+      <p>© 2025 Hyundai Motor Company. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <script type="module" src="./src/survey.ts"></script>
+</body>
+</html>
