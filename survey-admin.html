@@ -327,12 +327,16 @@ function handleLogin(e) {
   e.preventDefault();
   const input = document.getElementById('pin-input');
   const errEl = document.getElementById('login-error');
-  // Check global ADMIN_PIN or default to 1234
   const pin = window.ADMIN_PIN || '1234';
+  console.log('[login] 입력값:', input.value, '/ 기대 PIN:', pin, '/ initAdmin 준비:', typeof window.initAdmin);
   if (input.value === pin) {
     document.getElementById('login-screen').hidden = true;
     document.getElementById('admin-app').hidden = false;
-    if (typeof window.initAdmin === 'function') window.initAdmin();
+    if (typeof window.initAdmin === 'function') {
+      window.initAdmin().catch(err => console.error('[initAdmin 오류]', err));
+    } else {
+      console.warn('[login] window.initAdmin 미준비 — 모듈 로드 실패 가능성');
+    }
   } else {
     errEl.hidden = false;
     input.value = '';
@@ -503,10 +507,11 @@ function handleLogin(e) {
 </div>
 
 <script type="module">
-import { initializeApp } from 'https://esm.sh/firebase@12.10.0/app';
-import { getFirestore, collection, onSnapshot, query, orderBy } from 'https://esm.sh/firebase@12.10.0/firestore';
+import { initializeApp } from 'https://esm.sh/firebase@10/app';
+import { getFirestore, collection, onSnapshot, query, orderBy } from 'https://esm.sh/firebase@10/firestore';
 import { Chart, LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler } from 'https://esm.sh/chart.js@4';
 import QRCode from 'https://esm.sh/qrcode@1.5.3';
+console.log('[module] 모든 import 성공, 모듈 초기화 시작');
 
 const app = initializeApp({
   apiKey:            'AIzaSyDZDvl34tixYjKvDZwfsWmB0xqleE950rY',
@@ -829,8 +834,7 @@ async function initAdmin() {
   $('response-search')?.addEventListener('input', applyFilter);
 }
 window.initAdmin = initAdmin;
-
-window.initAdmin = initAdmin;
+console.log('[module] window.initAdmin 등록 완료');
 </script>
 </body>
 </html>
