@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>설문 관리자 | 현대자동차</title>
-  <link rel="icon" href="/assets/favicon.ico" />
+  <link rel="icon" href="data:," />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -328,14 +328,11 @@ function handleLogin(e) {
   const input = document.getElementById('pin-input');
   const errEl = document.getElementById('login-error');
   const pin = window.ADMIN_PIN || '1234';
-  console.log('[login] 입력값:', input.value, '/ 기대 PIN:', pin, '/ initAdmin 준비:', typeof window.initAdmin);
   if (input.value === pin) {
     document.getElementById('login-screen').hidden = true;
     document.getElementById('admin-app').hidden = false;
     if (typeof window.initAdmin === 'function') {
       window.initAdmin().catch(err => console.error('[initAdmin 오류]', err));
-    } else {
-      console.warn('[login] window.initAdmin 미준비 — 모듈 로드 실패 가능성');
     }
   } else {
     errEl.hidden = false;
@@ -511,7 +508,6 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/fireba
 import { getFirestore, collection, onSnapshot, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import { Chart, LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler } from 'https://esm.sh/chart.js@4';
 import QRCode from 'https://esm.sh/qrcode@1.5.3';
-console.log('[module] 모든 import 성공, 모듈 초기화 시작');
 
 const app = initializeApp({
   apiKey:            'AIzaSyDZDvl34tixYjKvDZwfsWmB0xqleE950rY',
@@ -834,7 +830,6 @@ async function initAdmin() {
   $('response-search')?.addEventListener('input', applyFilter);
 }
 window.initAdmin = initAdmin;
-console.log('[module] window.initAdmin 등록 완료');
 </script>
 </body>
 </html>
