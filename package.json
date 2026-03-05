@@ -1,0 +1,28 @@
+{
+  "name": "hmghrd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HYUNFLIX/hmghrd.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HYUNFLIX/hmghrd/issues"
+  },
+  "homepage": "https://github.com/HYUNFLIX/hmghrd#readme",
+  "devDependencies": {
+    "@types/chart.js": "^2.9.41",
+    "@types/node": "^25.3.3",
+    "chart.js": "^4.5.1",
+    "firebase": "^12.10.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}
