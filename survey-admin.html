@@ -314,13 +314,30 @@
     </div>
     <h1>관리자 로그인</h1>
     <p>설문 관리자 PIN을 입력하세요</p>
-    <form id="login-form">
+    <form id="login-form" onsubmit="handleLogin(event)">
       <input type="password" id="pin-input" class="login-input" placeholder="● ● ● ● ● ●" autocomplete="current-password" />
       <button type="submit" class="btn-primary">로그인</button>
       <p id="login-error" class="login-error" hidden>PIN이 올바르지 않습니다.</p>
     </form>
   </div>
 </div>
+
+<script>
+function handleLogin(e) {
+  e.preventDefault();
+  const input = document.getElementById('pin-input');
+  const errEl = document.getElementById('login-error');
+  if (input.value === '1234') {
+    document.getElementById('login-screen').hidden = true;
+    document.getElementById('admin-app').hidden = false;
+    if (typeof initAdmin === 'function') initAdmin();
+  } else {
+    errEl.hidden = false;
+    input.value = '';
+    input.focus();
+  }
+}
+</script>
 
 <!-- ── Admin App ───────────────────────────────────────────────────────────── -->
 <div id="admin-app" hidden>
@@ -511,24 +528,6 @@ let currentPage       = 1;
 let timelineChart     = null;
 
 const $ = (id) => document.getElementById(id);
-
-// ── 로그인 ─────────────────────────────────────────────────────
-function setupLogin() {
-  const form  = $('login-form');
-  const input = $('pin-input');
-  const errEl = $('login-error');
-  form?.addEventListener('submit', e => {
-    e.preventDefault();
-    if (input?.value === ADMIN_PIN) {
-      $('login-screen').hidden = true;
-      $('admin-app').hidden    = false;
-      initAdmin();
-    } else {
-      if (errEl) errEl.hidden = false;
-      if (input) { input.value = ''; input.focus(); }
-    }
-  });
-}
 
 // ── 탭 전환 ────────────────────────────────────────────────────
 function setupTabs() {
@@ -828,7 +827,6 @@ async function initAdmin() {
   $('response-search')?.addEventListener('input', applyFilter);
 }
 
-setupLogin();
 </script>
 </body>
 </html>
