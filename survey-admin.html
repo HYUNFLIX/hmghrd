@@ -327,10 +327,12 @@ function handleLogin(e) {
   e.preventDefault();
   const input = document.getElementById('pin-input');
   const errEl = document.getElementById('login-error');
-  if (input.value === '1234') {
+  // Check global ADMIN_PIN or default to 1234
+  const pin = window.ADMIN_PIN || '1234';
+  if (input.value === pin) {
     document.getElementById('login-screen').hidden = true;
     document.getElementById('admin-app').hidden = false;
-    if (typeof initAdmin === 'function') initAdmin();
+    if (typeof window.initAdmin === 'function') window.initAdmin();
   } else {
     errEl.hidden = false;
     input.value = '';
@@ -519,6 +521,7 @@ const db = getFirestore(app);
 Chart.register(LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
 const ADMIN_PIN  = '1234';
+window.ADMIN_PIN = ADMIN_PIN;
 const SURVEY_URL = `${location.origin}/survey.html`;
 const PAGE_SIZE  = 20;
 
@@ -817,7 +820,6 @@ async function exportSummary() {
 // ── 로그아웃 ──────────────────────────────────────────────────
 function setupLogout() { $('logout-btn')?.addEventListener('click', () => location.reload()); }
 
-// ── 어드민 초기화 ─────────────────────────────────────────────
 async function initAdmin() {
   setupTabs();
   setupLogout();
@@ -826,6 +828,7 @@ async function initAdmin() {
   subscribeResponses();
   $('response-search')?.addEventListener('input', applyFilter);
 }
+window.initAdmin = initAdmin;
 
 </script>
 </body>
