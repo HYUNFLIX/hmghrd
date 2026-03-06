@@ -681,6 +681,7 @@ footer p       { color: #a0aec0; font-size: 0.875rem; }
 .sched-flow {
   display: flex;
   align-items: stretch;
+  justify-content: center;
   gap: 0;
   flex-wrap: wrap;
   row-gap: 12px;

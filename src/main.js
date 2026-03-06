@@ -104,7 +104,7 @@ function initNeuralNetwork() {
       y: 0.1 * (canvas.height || 700)  + Math.random() * 0.8 * (canvas.height || 700),
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-      r:  20 + Math.random() * 10,
+      r:  4 + Math.random() * 4,
       phase: Math.random() * Math.PI * 2,
     }
   })
@@ -130,22 +130,22 @@ function initNeuralNetwork() {
         const dx = a.x - b.x, dy = a.y - b.y
         const dist = Math.sqrt(dx * dx + dy * dy)
         if (dist > CONNECT) continue
-        const alpha = (1 - dist / CONNECT) * 0.28
+        const alpha = (1 - dist / CONNECT) * 0.18
 
         ctx.beginPath()
         ctx.moveTo(a.x, a.y)
         ctx.lineTo(b.x, b.y)
         ctx.strokeStyle = `rgba(95,177,235,${alpha})`
-        ctx.lineWidth = alpha * 2.5
+        ctx.lineWidth = 0.8
         ctx.stroke()
 
         // Animated data packet along edge
-        const prog = ((t * 0.45) + i * 0.11 + j * 0.07) % 1
+        const prog = ((t * 0.35) + i * 0.11 + j * 0.07) % 1
         const px = a.x + (b.x - a.x) * prog
         const py = a.y + (b.y - a.y) * prog
         ctx.beginPath()
-        ctx.arc(px, py, 2, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(74,236,216,${Math.min(alpha * 4, 0.8)})`
+        ctx.arc(px, py, 1.2, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(74,236,216,${Math.min(alpha * 3, 0.35)})`
         ctx.fill()
       }
     }
@@ -155,30 +155,23 @@ function initNeuralNetwork() {
       const pulse = 1 + 0.07 * Math.sin(t * 1.7 + n.phase)
       const r = n.r * pulse
 
-      // Glow halo
-      const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 2.4)
-      grd.addColorStop(0, n.color + '22')
+      // Soft glow
+      const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 3)
+      grd.addColorStop(0, n.color + '18')
       grd.addColorStop(1, 'transparent')
       ctx.beginPath()
-      ctx.arc(n.x, n.y, r * 2.4, 0, Math.PI * 2)
+      ctx.arc(n.x, n.y, r * 3, 0, Math.PI * 2)
       ctx.fillStyle = grd
       ctx.fill()
 
-      // Node circle
+      // Node dot
       ctx.beginPath()
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2)
-      ctx.fillStyle = 'rgba(10,26,77,0.72)'
+      ctx.fillStyle = n.color + '55'
       ctx.fill()
-      ctx.strokeStyle = n.color + '99'
-      ctx.lineWidth = 1.5
+      ctx.strokeStyle = n.color + '66'
+      ctx.lineWidth = 0.8
       ctx.stroke()
-
-      // Label
-      ctx.font = `700 ${Math.round(r * 0.5)}px Inter,system-ui,sans-serif`
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.fillStyle = n.color
-      ctx.fillText(n.label, n.x, n.y)
     }
 
     requestAnimationFrame(draw)
