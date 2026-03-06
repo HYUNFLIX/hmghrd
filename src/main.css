@@ -373,7 +373,7 @@ section { padding: 5rem 0; }
   margin-bottom: 1.5rem;
 }
 
-.benefit-icon img { width: 2rem; height: 2rem; }
+.benefit-icon img { width: 2rem; height: 2rem; filter: brightness(0) invert(1); }
 
 .benefit-number {
   position: absolute;
