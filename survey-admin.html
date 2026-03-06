@@ -57,8 +57,8 @@
       border: 1.5px solid var(--border);
       border-radius: var(--radius);
       font-size: 1rem; font-family: inherit;
-      outline: none; text-align: center;
-      letter-spacing: 0.2em; margin-bottom: 12px;
+      outline: none; text-align: left;
+      margin-bottom: 12px;
       transition: border-color 0.15s;
     }
     .login-input:focus { border-color: var(--blue); }
@@ -317,12 +317,12 @@
       </svg>
     </div>
     <h1>관리자 로그인</h1>
-    <p>설문 관리자 PIN을 입력하세요</p>
+    <p>Firebase 관리자 계정으로 로그인하세요</p>
     <form id="login-form">
-      <input type="text" name="username" value="admin" autocomplete="username" style="display:none" aria-hidden="true" />
-      <input type="password" id="pin-input" class="login-input" placeholder="● ● ● ● ● ●" autocomplete="current-password" />
-      <button type="submit" class="btn-primary">로그인</button>
-      <p id="login-error" class="login-error" hidden>PIN이 올바르지 않습니다.</p>
+      <input type="email" id="email-input" class="login-input" placeholder="이메일" autocomplete="username" style="letter-spacing:normal;text-align:left" required />
+      <input type="password" id="password-input" class="login-input" placeholder="비밀번호" autocomplete="current-password" required />
+      <button type="submit" class="btn-primary" id="login-btn">로그인</button>
+      <p id="login-error" class="login-error" hidden></p>
     </form>
   </div>
 </div>
@@ -456,6 +456,8 @@
 
 <script type="module">
 import { initializeApp }        from 'https://esm.sh/firebase@12.10.0/app';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+                                from 'https://esm.sh/firebase@12.10.0/auth';
 import { getFirestore, collection, onSnapshot, query, orderBy }
                                 from 'https://esm.sh/firebase@12.10.0/firestore';
 import { Chart, LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler }
@@ -471,12 +473,12 @@ const app = initializeApp({
   messagingSenderId: '410748410266',
   appId:             '1:410748410266:web:364e5ee50fc6efb7c94223',
 });
-const db = getFirestore(app);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
 Chart.register(LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler);
 
 // ── 상수 ─────────────────────────────────────────────────────
-const ADMIN_PIN  = '1234';
 const SURVEY_URL = `${location.origin}/survey.html`;
 const PAGE_SIZE  = 20;
 
@@ -526,20 +528,57 @@ function download(content, filename, type) {
   URL.revokeObjectURL(url);
 }
 
-// ── 로그인 ───────────────────────────────────────────────────
-function setupLogin() {
-  $('login-form').addEventListener('submit', e => {
-    e.preventDefault();
-    const input = $('pin-input');
-    if (input.value === ADMIN_PIN) {
+// ── Firebase Auth 상태 감지 ───────────────────────────────────
+function setupAuthState() {
+  onAuthStateChanged(auth, user => {
+    if (user) {
       $('login-screen').hidden = true;
       $('admin-app').hidden    = false;
       initAdmin();
     } else {
-      $('login-error').hidden = false;
-      input.value = ''; input.focus();
+      $('login-screen').hidden = false;
+      $('admin-app').hidden    = true;
+      if (unsubscribe) { unsubscribe(); unsubscribe = null; }
     }
   });
+}
+
+// ── 로그인 ───────────────────────────────────────────────────
+function setupLogin() {
+  $('login-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const email    = $('email-input').value.trim();
+    const password = $('password-input').value;
+    const errEl    = $('login-error');
+    const btn      = $('login-btn');
+    errEl.hidden = true;
+    btn.disabled = true;
+    btn.textContent = '로그인 중...';
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // 성공 시 onAuthStateChanged가 자동으로 화면 전환
+    } catch (err) {
+      errEl.textContent = firebaseErrorMsg(err.code);
+      errEl.hidden = false;
+      $('password-input').value = '';
+      $('password-input').focus();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '로그인';
+    }
+  });
+}
+
+function firebaseErrorMsg(code) {
+  switch (code) {
+    case 'auth/invalid-email':          return '이메일 형식이 올바르지 않습니다.';
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':     return '이메일 또는 비밀번호가 올바르지 않습니다.';
+    case 'auth/too-many-requests':      return '로그인 시도가 너무 많습니다. 잠시 후 다시 시도하세요.';
+    case 'auth/network-request-failed': return '네트워크 오류입니다. 연결을 확인하세요.';
+    default:                            return `오류가 발생했습니다. (${code})`;
+  }
 }
 
 // ── 탭 전환 ──────────────────────────────────────────────────
@@ -847,10 +886,7 @@ function setupExport() {
 
 // ── 로그아웃 ──────────────────────────────────────────────────
 function setupLogout() {
-  $('logout-btn').addEventListener('click', () => {
-    if (unsubscribe) unsubscribe();
-    location.reload();
-  });
+  $('logout-btn').addEventListener('click', () => signOut(auth));
 }
 
 // ── 어드민 초기화 ─────────────────────────────────────────────
@@ -865,6 +901,7 @@ async function initAdmin() {
 
 // ── 엔트리 ───────────────────────────────────────────────────
 setupLogin();
+setupAuthState();
 </script>
 
 </body>
