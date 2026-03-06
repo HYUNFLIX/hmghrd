@@ -283,6 +283,52 @@ function initScheduleTabs() {
   })
 }
 
+// ── Header scroll + active nav + hamburger + back-to-top ──────
+function initNav() {
+  const header   = document.getElementById('main-header')
+  const toggle   = document.getElementById('nav-toggle')
+  const nav      = document.getElementById('main-nav')
+  const backTop  = document.getElementById('back-to-top')
+  const navLinks = document.querySelectorAll('.nav-link')
+
+  // Hamburger toggle
+  toggle.addEventListener('click', () => {
+    const open = nav.classList.toggle('open')
+    toggle.classList.toggle('open', open)
+    toggle.setAttribute('aria-label', open ? '메뉴 닫기' : '메뉴 열기')
+  })
+
+  // Close mobile nav on link click
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('open')
+      toggle.classList.remove('open')
+    })
+  })
+
+  // Scroll: header bg + back-to-top visibility + active nav
+  const sections = ['overview','program','faq','guide'].map(id => document.getElementById(id)).filter(Boolean)
+
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY
+
+    // Header solid bg
+    header.classList.toggle('scrolled', y > 60)
+
+    // Back to top
+    backTop.classList.toggle('visible', y > 400)
+
+    // Active nav link
+    let current = ''
+    sections.forEach(s => { if (y >= s.offsetTop - 120) current = s.id })
+    navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${current}`))
+  }, { passive: true })
+
+  // Back to top click
+  backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
+}
+
 initCountdown()
 initNeuralNetwork()
 initScheduleTabs()
+initNav()
