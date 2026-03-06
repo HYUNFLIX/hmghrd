@@ -526,7 +526,50 @@ function renderReport() {
     <td>${escHtml(r.email ?? '—')}</td>
   </tr>`).join('')
 
-  // 서술형 응답 섹션
+  // 서술형 응답 — 키워드 요약 함수
+  const STOP = new Set(['이','그','을','를','은','는','가','에','의','과','와','도','로','으로','에서','하고','하는','하기','있는','수','등','및','또는','위해','통해','것이','것을','위한','대한','더','현재','있어','합니다','입니다','있습니다','하여','많은','좋은','모든'])
+
+  function summarize(items, fieldId) {
+    if (!items.length) return '<p style="color:#718096;font-size:0.85rem;padding:8px 0">응답 없음</p>'
+
+    // 키워드 빈도 추출
+    const freq = {}
+    items.forEach(r => {
+      String(r[fieldId] ?? '').split(/[\s,，。.·\-\/()[\]{}'"!?]+/)
+        .forEach(w => {
+          const c = w.trim()
+          if (c.length >= 2 && !STOP.has(c)) freq[c] = (freq[c] ?? 0) + 1
+        })
+    })
+    const topKw = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 12)
+    const kwHtml = topKw.map(([w, n]) =>
+      `<span class="rpt-kw-chip">${escHtml(w)} <span class="rpt-kw-cnt">${n}</span></span>`
+    ).join('')
+
+    // 대표 응답 3건 (100자 이내 요약)
+    const excerpts = items.slice(0, 3).map(r => {
+      const raw = String(r[fieldId] ?? '').trim()
+      const text = raw.length > 100 ? raw.slice(0, 100) + '…' : raw
+      const who  = escHtml(r.name ?? '익명') + (r.company ? ` · ${escHtml(r.company)}` : '')
+      return `<div class="rpt-excerpt-item">
+        <span class="rpt-excerpt-who">${who}</span>
+        <p class="rpt-excerpt-text">"${escHtml(text)}"</p>
+      </div>`
+    }).join('')
+
+    return `
+      <div class="rpt-summary-box">
+        <div class="rpt-summary-kw">
+          <div class="rpt-summary-label">주요 키워드</div>
+          <div class="rpt-kw-cloud">${kwHtml}</div>
+        </div>
+        <div class="rpt-summary-excerpts">
+          <div class="rpt-summary-label">대표 응답 (${Math.min(3, items.length)}건)</div>
+          ${excerpts}
+        </div>
+      </div>`
+  }
+
   const textQuestions = [
     { id: 'problem',  label: 'Q2. 해결하고 싶은 문제' },
     { id: 'output',   label: 'Q3. 만들고 싶은 서비스 아웃풋' },
@@ -534,18 +577,17 @@ function renderReport() {
     { id: 'scenario', label: 'Q5. 구현하고 싶은 시나리오 / 기능' },
   ]
 
-  const textSections = textQuestions.map(q => {
-    const items = allResponses.filter(r => String(r[q.id] ?? '').trim())
+  const textSections = textQuestions.map((q, qi) => {
+    const items    = allResponses.filter(r => String(r[q.id] ?? '').trim())
     const answered = items.length
-    const itemsHtml = items.map(r => `
-      <div class="rpt-response-item">
-        <div class="rpt-response-meta">${escHtml(r.name ?? '익명')}${r.company ? ` · ${escHtml(r.company)}` : ''}${r.team ? ` · ${escHtml(r.team)}` : ''}</div>
-        <div class="rpt-response-text">${escHtml(String(r[q.id] ?? '').trim())}</div>
-      </div>`).join('')
     return `
-      <div class="rpt-section">
-        <div class="rpt-section-title">${q.label} <span style="font-weight:400;font-size:0.82rem;color:#718096">(응답 ${answered}/${total}명)</span></div>
-        ${answered === 0 ? '<p style="color:#718096;font-size:0.85rem">응답 없음</p>' : itemsHtml}
+      <div class="rpt-q-block">
+        <div class="rpt-q-header">
+          <span class="rpt-q-num">${String(qi + 2).padStart(2,'0')}</span>
+          <span class="rpt-q-label">${q.label}</span>
+          <span class="rpt-q-count">응답 ${answered} / ${total}명</span>
+        </div>
+        ${summarize(items, q.id)}
       </div>`
   }).join('')
 
@@ -631,10 +673,11 @@ function renderReport() {
     </div>
 
     <!-- 서술형 응답 -->
-    <div class="rpt-section">
-      <div class="rpt-section-title">05 사전과제 응답 전체</div>
+    <div class="rpt-section rpt-assignment-section">
+      <div class="rpt-section-title">05 사전과제 응답 요약</div>
+      <p class="rpt-section-desc">각 항목별 주요 키워드 빈도와 대표 응답 3건을 요약 표시합니다.</p>
+      ${textSections}
     </div>
-    ${textSections}
 
     <div class="rpt-footer">
       본 보고서는 ${today} 기준으로 자동 생성되었습니다.<br>

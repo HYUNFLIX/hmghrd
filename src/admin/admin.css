@@ -791,6 +791,142 @@ body {
   white-space: pre-wrap;
 }
 
+/* ── 사전과제 응답 요약 ─────────────────────────────────────── */
+.rpt-section-desc {
+  font-size: 0.82rem;
+  color: #718096;
+  margin: -8px 0 20px;
+}
+
+.rpt-assignment-section { background: #f0f7ff; border: 1px solid #bfdbfe; }
+
+/* Q 블록 — 질문 단위 구분 박스 */
+.rpt-q-block {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.rpt-q-block:last-child { margin-bottom: 0; }
+
+.rpt-q-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.rpt-q-num {
+  width: 28px;
+  height: 28px;
+  background: var(--brand-blue);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rpt-q-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--brand-blue);
+  flex: 1;
+}
+
+.rpt-q-count {
+  font-size: 0.75rem;
+  color: #718096;
+  background: #e2e8f0;
+  padding: 3px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+/* 요약 박스 내부 */
+.rpt-summary-box {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media print, (max-width: 700px) {
+  .rpt-summary-box { grid-template-columns: 1fr; }
+}
+
+.rpt-summary-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+/* 키워드 클라우드 */
+.rpt-kw-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rpt-kw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.rpt-kw-cnt {
+  background: #bfdbfe;
+  color: #1e40af;
+  border-radius: 8px;
+  padding: 0 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+/* 대표 응답 */
+.rpt-summary-excerpts { border-left: 1px solid #e2e8f0; padding-left: 16px; }
+
+.rpt-excerpt-item {
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border-left: 3px solid #93c5fd;
+}
+.rpt-excerpt-item:last-child { margin-bottom: 0; }
+
+.rpt-excerpt-who {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--brand-blue);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.rpt-excerpt-text {
+  font-size: 0.83rem;
+  color: #374151;
+  line-height: 1.55;
+  margin: 0;
+  font-style: italic;
+}
+
 .rpt-footer {
   text-align: center;
   font-size: 0.75rem;
