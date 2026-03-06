@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>설문 관리자 | 현대자동차</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/styles/common.css" />
+  <link rel="stylesheet" href="/src/admin/admin.css" />
+</head>
+<body>
+
+<!-- ── Login ──────────────────────────────────────────────────────────────── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 0C44.8 0 0 22.4 0 50s44.8 50 100 50 100-22.4 100-50S155.2 0 100 0zm-4.2 72.6L59.4 27.4h16.2l24 32.8 24-32.8h16.2L104.2 72.6H95.8z" fill="#003087"/>
+      </svg>
+    </div>
+    <h1>관리자 로그인</h1>
+    <p>Firebase 관리자 계정으로 로그인하세요</p>
+    <form id="login-form">
+      <input type="email" id="email-input" class="login-input" placeholder="이메일" autocomplete="username" style="letter-spacing:normal;text-align:left" required />
+      <input type="password" id="password-input" class="login-input" placeholder="비밀번호" autocomplete="current-password" required />
+      <button type="submit" class="btn-primary" id="login-btn">로그인</button>
+      <p id="login-error" class="login-error" hidden></p>
+    </form>
+  </div>
+</div>
+
+<!-- ── Admin App ───────────────────────────────────────────────────────────── -->
+<div id="admin-app" hidden>
+
+  <header class="admin-header">
+    <div class="header-left">
+      <button class="menu-toggle" id="menu-toggle" aria-label="메뉴">☰</button>
+      <span class="app-title">현대자동차 교육 사전설문 · 관리자</span>
+    </div>
+    <div class="header-right">
+      <span class="live-dot" title="실시간 연동 중"></span>
+      <span class="header-badge">총 응답 <strong id="header-total">0</strong></span>
+      <span class="header-badge">오늘 <strong id="header-today">0</strong></span>
+      <span class="header-badge" id="header-last-badge" style="display:none">최근 <strong id="header-last">—</strong></span>
+      <button class="btn-ghost" id="logout-btn">로그아웃</button>
+    </div>
+  </header>
+
+  <div class="admin-body">
+
+    <nav class="admin-sidebar" id="sidebar">
+      <ul class="nav-list">
+        <li><button class="nav-item active" data-tab="overview"><span class="nav-icon">📊</span> 개요</button></li>
+        <li><button class="nav-item" data-tab="analytics"><span class="nav-icon">📈</span> 문항 분석</button></li>
+        <li><button class="nav-item" data-tab="responses"><span class="nav-icon">📋</span> 응답 목록</button></li>
+        <hr class="sidebar-divider" />
+        <li><button class="nav-item" data-tab="export"><span class="nav-icon">💾</span> 내보내기</button></li>
+      </ul>
+    </nav>
+
+    <main class="admin-main">
+
+      <!-- 개요 -->
+      <section id="tab-overview" class="tab-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">총 응답 수</div>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-sub">누적</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">오늘 응답</div>
+            <div class="stat-value" id="stat-today">0</div>
+            <div class="stat-sub" id="stat-today-date">—</div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-label">완료율</div>
+            <div class="stat-value" id="stat-completion">—</div>
+            <div class="stat-sub">필수 항목 기준</div>
+          </div>
+          <div class="stat-card gray">
+            <div class="stat-label">최근 응답</div>
+            <div class="stat-value" style="font-size:1.1rem;padding-top:6px" id="stat-last">—</div>
+            <div class="stat-sub">경과 시간</div>
+          </div>
+        </div>
+
+        <div class="overview-row">
+          <div class="card">
+            <div class="card-title">📅 응답 추이 (최근 14일)</div>
+            <div class="chart-wrapper"><canvas id="timeline-chart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title">📱 설문 QR 코드</div>
+            <div class="qr-panel">
+              <div class="qr-canvas-wrapper"><canvas id="qr-canvas"></canvas></div>
+              <div class="survey-url-box" id="survey-url-display">—</div>
+              <div class="qr-actions">
+                <button class="btn-sm btn-blue" id="download-qr">⬇ QR 저장</button>
+                <button class="btn-sm btn-outline-sm" id="copy-url">🔗 URL 복사</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 문항 분석 -->
+      <section id="tab-analytics" class="tab-content" hidden>
+        <div class="analytics-grid" id="analytics-container">
+          <p class="no-data">데이터를 불러오는 중...</p>
+        </div>
+      </section>
+
+      <!-- 응답 목록 -->
+      <section id="tab-responses" class="tab-content" hidden>
+        <div class="card" style="gap:16px;display:flex;flex-direction:column">
+          <div class="responses-toolbar">
+            <div style="display:flex;align-items:center;gap:12px">
+              <input type="text" id="response-search" class="search-input" placeholder="🔍 응답 내용 검색..." />
+              <span class="response-count" id="response-count">0개 응답</span>
+            </div>
+          </div>
+          <div id="responses-table-container"><p class="no-data">아직 응답이 없습니다.</p></div>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </section>
+
+      <!-- 내보내기 -->
+      <section id="tab-export" class="tab-content" hidden>
+        <div class="card">
+          <div class="card-title">💾 데이터 내보내기</div>
+          <div class="export-grid">
+            <div class="export-card">
+              <div class="export-icon">📊</div>
+              <div class="export-title">CSV 내보내기</div>
+              <div class="export-desc">엑셀(Excel)에서 바로 열 수 있는 CSV 파일로 전체 응답을 다운로드합니다. BOM이 포함되어 한글이 깨지지 않습니다.</div>
+              <button class="btn-export csv" id="export-csv">CSV 다운로드</button>
+            </div>
+            <div class="export-card">
+              <div class="export-icon">🗂</div>
+              <div class="export-title">JSON 내보내기</div>
+              <div class="export-desc">원본 데이터 구조 그대로 JSON 파일로 다운로드합니다. 개발자나 추가 데이터 분석 시 활용하세요.</div>
+              <button class="btn-export json" id="export-json">JSON 다운로드</button>
+            </div>
+            <div class="export-card">
+              <div class="export-icon">📋</div>
+              <div class="export-title">요약 클립보드 복사</div>
+              <div class="export-desc">각 질문의 응답 통계를 텍스트 요약으로 클립보드에 복사합니다. 보고서 작성 시 빠르게 활용하세요.</div>
+              <button class="btn-export copy" id="export-summary">요약 복사</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script type="module" src="/src/admin/admin.ts"></script>
+
+</body>
+</html>
