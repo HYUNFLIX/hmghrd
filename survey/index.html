@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 기반 솔루션 기획 기본 과정(3/26) 신청서</title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="/styles/common.css" />
+  <link rel="stylesheet" href="/src/survey/survey.css" />
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <svg width="40" height="28" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Hyundai">
+        <path d="M100 0C44.8 0 0 22.4 0 50s44.8 50 100 50 100-22.4 100-50S155.2 0 100 0zm-4.2 72.6L59.4 27.4h16.2l24 32.8 24-32.8h16.2L104.2 72.6H95.8z" fill="white"/>
+      </svg>
+      <h1>현대자동차 사전 설문</h1>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Loading state -->
+    <div id="loading">
+      <div class="spinner"></div>
+      <p>설문을 불러오는 중...</p>
+    </div>
+
+    <!-- Already submitted state -->
+    <div id="already-submitted" hidden>
+      <div class="status-card">
+        <div class="status-icon">✅</div>
+        <h2>이미 제출하셨습니다</h2>
+        <p>소중한 응답 감사합니다.<br>이미 이 설문에 참여하셨습니다.</p>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div id="success-message" hidden>
+      <div class="status-card">
+        <div class="status-icon">🎉</div>
+        <h2>답변이 성공적으로 제출되었습니다.</h2>
+        <p>
+          소중한 시간을 내어 참여해 주셔서 감사합니다.<br>
+          귀하의 의견 하나하나가 의미 있는 결과를 만드는 데 큰 힘이 됩니다.<br>
+          오늘도 행복한 하루 보내시기 바랍니다.<br><br>
+          <strong>감사합니다.</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- Survey container -->
+    <div id="survey-container" hidden>
+
+      <!-- Survey header (title / description populated by JS) -->
+      <div class="survey-header">
+        <h2 id="survey-title"></h2>
+        <p id="survey-description"></p>
+      </div>
+
+      <!-- Error banner -->
+      <p id="error-banner" hidden></p>
+
+      <!-- Form -->
+      <form id="survey-form" novalidate>
+        <div id="questions"></div>
+        <div class="submit-area">
+          <button type="submit" id="submit-btn">신청하기</button>
+        </div>
+      </form>
+
+    </div>
+
+    <footer class="site-footer">
+      <p>© 2025 Hyundai Motor Company. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <script type="module" src="/src/survey/survey.ts"></script>
+</body>
+</html>

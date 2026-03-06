@@ -1,0 +1,74 @@
+/* ── Pretendard Font ───────────────────────────────────────── */
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 900;
+  font-display: swap;
+  src: url('https://ext.same-assets.com/123563734/1514056499.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 800;
+  font-display: swap;
+  src: url('https://ext.same-assets.com/123563734/984785649.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://ext.same-assets.com/123563734/847981925.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 600;
+  font-display: swap;
+  src: url('https://ext.same-assets.com/123563734/2100512654.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://ext.same-assets.com/123563734/3602638983.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://ext.same-assets.com/123563734/2719654046.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Pretendard';
+  font-weight: 300;
+  font-display: swap;
+  src: url('https://ext.same-assets.com/123563734/1578360979.woff2') format('woff2');
+}
+
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Brand Tokens ───────────────────────────────────────────── */
+:root {
+  --brand-blue:   #003087;
+  --brand-blue-mid:   #0050b3;
+  --brand-blue-light: #e8efff;
+  --brand-silver: #6b7280;
+  --bg:           #f5f7fa;
+  --surface:      #ffffff;
+  --border:       #d1d5db;
+  --text:         #111827;
+  --text-muted:   #6b7280;
+  --error:        #dc2626;
+  --success:      #16a34a;
+  --warning:      #d97706;
+  --radius:       8px;
+  --shadow:       0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
+body {
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR',
+               -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
