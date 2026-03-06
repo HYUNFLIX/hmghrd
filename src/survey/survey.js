@@ -1,23 +1,34 @@
 import { db } from '/src/firebase.js'
 import { collection, addDoc, serverTimestamp } from 'https://esm.sh/firebase@12.10.0/firestore'
 
-const SURVEY_TITLE       = 'AI 기반 솔루션 기획 기본 과정 사전 설문'
-const SURVEY_DESCRIPTION = '3/26(수) 교육 참석에 앞서 간단한 사전 설문을 작성해 주세요.\n응답 내용은 교육 설계에 활용됩니다.'
+const SURVEY_TITLE       = 'AI 기반 솔루션 기획 기본 과정(3/26) 신청서'
+const SURVEY_DESCRIPTION = '본 내용은 HRDer 러닝세션 연계과정인 AI 기반 솔루션 기획 과정 신청서 입니다.\n더욱 의미있는 과정이 될 수 있도록 현업에서 본인의 고민을 담아 작성 부탁드립니다.\n\n과정일정 : 3/26(목) 오후 1시30분~5시30분\n방식 : 실시간 온라인'
 const SUBMIT_KEY         = 'hmg-survey-submitted'
 
 const questions = [
-  { id: 'name',          type: 'text',     title: '이름',        required: true },
-  { id: 'department',    type: 'text',     title: '부서 / 팀',   required: true },
-  { id: 'position',      type: 'select',   title: '직급',        required: true,
-    options: ['사원', '주임', '대리', '과장', '차장', '부장', '수석/책임', '기타'] },
-  { id: 'email',         type: 'email',    title: '사내 이메일', required: true },
-  { id: 'ai_experience', type: 'radio',    title: 'AI 관련 업무 경험이 있으신가요?', required: true,
-    options: ['없음 (처음 접함)', '간접 경험 (ChatGPT 등 개인적으로 사용)', '업무 활용 경험 있음', 'AI 프로젝트 참여 경험 있음'] },
-  { id: 'expectation',   type: 'checkbox', title: '이번 과정에서 가장 기대하는 것을 모두 선택해 주세요.', required: false,
-    options: ['AI 개념 및 트렌드 이해', 'AI 솔루션 기획 방법론 습득', '실습 / 실무 적용 사례 학습', '타 부서 협업 네트워킹', '향후 심화 과정 연계'] },
-  { id: 'ai_tool_level', type: 'rating',   title: '현재 AI 도구(ChatGPT, Copilot 등) 활용 수준을 평가해 주세요.',
-    description: '1 = 전혀 사용 안 함 · 5 = 일상 업무에 적극 활용', required: true, min: 1, max: 5 },
-  { id: 'requests',      type: 'textarea', title: '강사/운영진에게 전달하고 싶은 요청 사항이나 궁금한 점을 자유롭게 적어 주세요.', required: false },
+  { id: 'name',             type: 'text',     title: '성함을 작성해주세요',            required: true,
+    placeholder: '답변을 적어주세요' },
+  { id: 'company',          type: 'text',     title: '소속 회사를 입력해주세요.',       required: true,
+    description: '예) 현대자동차, 기아, 현대모비스 등 풀네임으로 입력해주세요.',
+    placeholder: '예) 현대자동차' },
+  { id: 'team',             type: 'text',     title: '소속 팀명을 입력해주세요.',       required: true,
+    description: '예) HRD전략팀',
+    placeholder: '예) HRD전략팀' },
+  { id: 'position',         type: 'text',     title: '직급/직책을 입력해주세요.',       required: true,
+    placeholder: '예) 책임매니저, 파트장 등' },
+  { id: 'email',            type: 'email',    title: '회사 이메일을 입력해주세요.',     required: true,
+    description: '과정 안내 발송용으로만 사용됩니다.',
+    placeholder: 'example@hyundai.com' },
+  { id: 'problem',          type: 'textarea', title: '본인이 이번 프로젝트를 통해서 해결하고 싶거나 향상시키고 싶은 문제를 작성해주세요.', required: true,
+    description: '본 과정은 본인의 현업 문제에 적용할 수 있는 아이디어를 기획하고 실제 구현해보는 PBL(Problem Based Learning) 형태의 교육입니다. 본 과정을 더 의미있게 진행하기 위해 본인의 평소 고민을 담아 최대한 자세히 작성해주세요.' },
+  { id: 'output',           type: 'textarea', title: 'AI 바이브코딩 과정을 통해 만들고 싶은 서비스의 아웃풋(구체적 이미지)를 작성해주세요.', required: true },
+  { id: 'value',            type: 'textarea', title: '이를 통해 해결하고 싶은 문제나 Value가 무엇인지 작성해주세요.', required: true },
+  { id: 'scenario',         type: 'textarea', title: '구현하고 싶은 서비스 시나리오나 기능에 대해 작성해주세요', required: true },
+  { id: 'advanced_course',  type: 'radio',    title: '이후 실제 프로토타입 구현을 위한 심화 과정(4/13~14, 16h, 오프라인)까지 참석하기 원하시나요?', required: true,
+    options: [{ label: '참석하기 원함', value: 'yes' }, { label: '참석하기 원하지 않음', value: 'no' }] },
+  { id: 'privacy_consent',  type: 'checkbox', title: '개인정보 동의', required: true,
+    description: '수집 항목: 성명, 소속, 이메일\n목적: 교육 과정 운영 및 안내\n보유 기간: 교육 종료 후 1년\n※ 동의를 거부할 수 있으나, 거부 시 신청이 불가합니다.',
+    options: [{ label: '개인정보 수집 및 이용에 동의합니다.', value: 'agree' }] },
 ]
 
 const $ = (id) => document.getElementById(id)
@@ -30,26 +41,33 @@ function showScreen(id) {
 }
 
 function renderInput(q) {
+  const ph = q.placeholder ? ` placeholder="${q.placeholder}"` : ''
   switch (q.type) {
     case 'text': case 'email':
-      return `<input class="form-input" type="${q.type}" id="q-${q.id}" name="${q.id}" autocomplete="off" />`
+      return `<input class="form-input" type="${q.type}" id="q-${q.id}" name="${q.id}" autocomplete="off"${ph} />`
     case 'select':
       return `<select class="form-select" id="q-${q.id}" name="${q.id}">
         <option value="">선택해 주세요</option>
         ${(q.options ?? []).map(o => `<option value="${o}">${o}</option>`).join('')}
       </select>`
     case 'radio':
-      return `<div class="options-group">${(q.options ?? []).map(o => `
-        <label class="option-item">
-          <input class="option-input" type="radio" name="${q.id}" value="${o}" />
-          <span class="option-label">${o}</span>
-        </label>`).join('')}</div>`
+      return `<div class="options-group">${(q.options ?? []).map(o => {
+        const val = typeof o === 'object' ? o.value : o
+        const lbl = typeof o === 'object' ? o.label : o
+        return `<label class="option-item">
+          <input class="option-input" type="radio" name="${q.id}" value="${val}" />
+          <span class="option-label">${lbl}</span>
+        </label>`
+      }).join('')}</div>`
     case 'checkbox':
-      return `<div class="options-group">${(q.options ?? []).map(o => `
-        <label class="option-item">
-          <input class="option-input" type="checkbox" name="${q.id}" value="${o}" />
-          <span class="option-label">${o}</span>
-        </label>`).join('')}</div>`
+      return `<div class="options-group">${(q.options ?? []).map(o => {
+        const val = typeof o === 'object' ? o.value : o
+        const lbl = typeof o === 'object' ? o.label : o
+        return `<label class="option-item">
+          <input class="option-input" type="checkbox" name="${q.id}" value="${val}" />
+          <span class="option-label">${lbl}</span>
+        </label>`
+      }).join('')}</div>`
     case 'rating': {
       const min = q.min ?? 1, max = q.max ?? 5
       const vals = Array.from({ length: max - min + 1 }, (_, i) => min + i)
@@ -58,7 +76,7 @@ function renderInput(q) {
         <label class="rating-label" for="r-${q.id}-${v}">${v}</label>`).join('')}</div>`
     }
     case 'textarea':
-      return `<textarea class="form-textarea" id="q-${q.id}" name="${q.id}" rows="4"></textarea>`
+      return `<textarea class="form-textarea" id="q-${q.id}" name="${q.id}" rows="4"${ph}></textarea>`
   }
 }
 
@@ -68,7 +86,7 @@ function renderQuestions() {
   container.innerHTML = questions.map((q, i) => {
     const num  = `<span class="question-number">Q${i + 1}.</span>`
     const req  = q.required ? ' <span class="required-mark">*</span>' : ''
-    const desc = q.description ? `<p class="question-desc">${q.description}</p>` : ''
+    const desc = q.description ? `<p class="question-desc" style="white-space:pre-line">${q.description}</p>` : ''
     return `<div class="question-block" id="block-${q.id}">
       <p class="question-title">${num} ${q.title}${req}</p>
       ${desc}${renderInput(q)}
