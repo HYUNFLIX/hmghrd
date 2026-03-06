@@ -319,6 +319,7 @@
     <h1>관리자 로그인</h1>
     <p>설문 관리자 PIN을 입력하세요</p>
     <form id="login-form">
+      <input type="text" name="username" value="admin" autocomplete="username" style="display:none" aria-hidden="true" />
       <input type="password" id="pin-input" class="login-input" placeholder="● ● ● ● ● ●" autocomplete="current-password" />
       <button type="submit" class="btn-primary">로그인</button>
       <p id="login-error" class="login-error" hidden>PIN이 올바르지 않습니다.</p>
