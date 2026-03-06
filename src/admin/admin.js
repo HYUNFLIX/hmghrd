@@ -1,6 +1,6 @@
 import { db, auth } from '/src/firebase.js'
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://esm.sh/firebase@12.10.0/auth'
-import { collection, onSnapshot, query, orderBy } from 'https://esm.sh/firebase@12.10.0/firestore'
+import { collection, onSnapshot, query, orderBy, deleteDoc, doc } from 'https://esm.sh/firebase@12.10.0/firestore'
 import { Chart, LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler } from 'https://esm.sh/chart.js@4.5.1'
 import QRCode from 'https://esm.sh/qrcode@1.5.3'
 
@@ -14,6 +14,7 @@ let filteredResponses = []
 let currentPage       = 1
 let timelineChart     = null
 let unsubscribe       = null
+let currentModalId    = null
 
 const $ = (id) => document.getElementById(id)
 
@@ -106,6 +107,7 @@ function setupTabs() {
       document.querySelectorAll('.tab-content').forEach(s => { s.hidden = s.id !== `tab-${tab}` })
       if (tab === 'analytics') renderAnalytics()
       if (tab === 'responses') renderResponsesTable()
+      if (tab === 'advanced')  renderAdvancedList()
     })
   })
   $('menu-toggle').addEventListener('click', () => $('sidebar').classList.toggle('open'))
@@ -136,15 +138,15 @@ function updateHeaderStats() {
 }
 
 function updateOverviewStats() {
-  const total  = allResponses.length
-  const today  = countToday(allResponses)
-  const last   = allResponses[0]?.submittedAt
-  const filled = allResponses.filter(r => r.name && r.email && r.advanced_course).length
-  $('stat-total').textContent      = String(total)
-  $('stat-today').textContent      = String(today)
-  $('stat-today-date').textContent = new Date().toLocaleDateString('ko-KR')
-  $('stat-completion').textContent = total ? `${Math.round((filled / total) * 100)}%` : '—'
-  $('stat-last').textContent       = last ? timeAgo(last.toDate()) : '—'
+  const total       = allResponses.length
+  const today       = countToday(allResponses)
+  const last        = allResponses[0]?.submittedAt
+  const advancedYes = allResponses.filter(r => r.advanced_course === 'yes').length
+  $('stat-total').textContent        = String(total)
+  $('stat-today').textContent        = String(today)
+  $('stat-today-date').textContent   = new Date().toLocaleDateString('ko-KR')
+  $('stat-advanced-yes').textContent = total ? `${advancedYes}명` : '—'
+  $('stat-last').textContent         = last ? timeAgo(last.toDate()) : '—'
 }
 
 function updateTimeline() {
@@ -202,14 +204,6 @@ async function renderQR() {
 }
 
 // ── 문항 분석 ─────────────────────────────────────────────────
-const QUESTIONS = [
-  { id: 'advanced_course', label: '심화 과정 참석 희망',                    type: 'choice' },
-  { id: 'problem',         label: '해결하고 싶은 문제',                      type: 'text'   },
-  { id: 'output',          label: '만들고 싶은 서비스 아웃풋',               type: 'text'   },
-  { id: 'value',           label: '해결하고 싶은 문제 / Value',              type: 'text'   },
-  { id: 'scenario',        label: '구현하고 싶은 시나리오 / 기능',           type: 'text'   },
-]
-
 function renderAnalytics() {
   const container = $('analytics-container')
   if (!container) return
@@ -217,71 +211,79 @@ function renderAnalytics() {
     container.innerHTML = '<p class="no-data">아직 응답이 없습니다.</p>'
     return
   }
-  container.innerHTML = QUESTIONS.map((q, i) => buildAnalyticsCard(q, i)).join('')
-}
 
-function buildAnalyticsCard(q, idx) {
-  let body = ''
-  if (q.type === 'choice' || q.type === 'multi') {
-    const freq = {}
-    allResponses.forEach(r => {
-      const val  = r[q.id]
-      const vals = Array.isArray(val) ? val : val ? [String(val)] : []
-      vals.forEach(v => { freq[v] = (freq[v] ?? 0) + 1 })
-    })
-    const total = Object.values(freq).reduce((a, b) => a + b, 0)
-    body = Object.entries(freq).sort((a, b) => b[1] - a[1]).map(([label, count]) => {
-      const pct = total ? Math.round((count / total) * 100) : 0
-      return `<div style="margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:0.88rem">
-          <span>${escHtml(label)}</span><span style="color:var(--text-muted)">${count}명 (${pct}%)</span>
-        </div>
-        <div style="background:var(--brand-blue-light);border-radius:4px;height:8px">
-          <div style="background:var(--brand-blue);width:${pct}%;height:100%;border-radius:4px"></div>
-        </div>
-      </div>`
-    }).join('')
-  } else if (q.type === 'rating') {
-    const vals = allResponses.map(r => Number(r[q.id])).filter(v => !isNaN(v) && v > 0)
-    const avg  = vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2) : '—'
-    const freq = {}
-    vals.forEach(v => { freq[v] = (freq[v] ?? 0) + 1 })
-    const bars = [1, 2, 3, 4, 5].map(v => {
-      const count = freq[v] ?? 0
-      const pct   = vals.length ? Math.round((count / vals.length) * 100) : 0
-      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.88rem">
-        <span style="min-width:16px;color:var(--text-muted)">${v}</span>
-        <div style="flex:1;background:var(--brand-blue-light);border-radius:4px;height:8px">
-          <div style="background:var(--brand-blue);width:${pct}%;height:100%;border-radius:4px"></div>
-        </div>
-        <span style="color:var(--text-muted);min-width:36px;text-align:right">${count}명</span>
-      </div>`
-    }).join('')
-    body = `<p class="rating-avg">평균 <strong>${avg}</strong> / 5</p>${bars}`
-  } else if (q.type === 'text') {
-    const texts = allResponses.map(r => String(r[q.id] ?? '').trim()).filter(Boolean)
-    body = texts.length === 0
-      ? '<p class="no-data">응답 없음</p>'
-      : `<div class="text-responses">${texts.map((t, i) =>
-          `<div class="text-response-item">
-            <div class="text-response-num">${i + 1}</div>
-            <div class="text-response-content">${escHtml(t)}</div>
-          </div>`).join('')}</div>`
-  }
-  const respCount = allResponses.filter(r => {
-    const v = r[q.id]
-    return Array.isArray(v) ? v.length > 0 : !!v
-  }).length
-  return `<div class="analytics-card">
+  const total = allResponses.length
+
+  // 심화과정 참석 여부 카드
+  const yesCount = allResponses.filter(r => r.advanced_course === 'yes').length
+  const noCount  = allResponses.filter(r => r.advanced_course === 'no').length
+  const yesPct   = Math.round(yesCount / total * 100)
+  const noPct    = Math.round(noCount  / total * 100)
+  const undecided = total - yesCount - noCount
+
+  const advancedCard = `<div class="analytics-card">
     <div class="analytics-card-header">
       <div class="q-meta">
-        <span class="q-badge">Q${idx + 1}</span>
-        <span class="analytics-q-title">${q.label}</span>
+        <span class="q-badge">Q1</span>
+        <span class="analytics-q-title">심화 과정(4/13~14) 참석 희망</span>
       </div>
-      <span class="q-response-rate">응답 ${respCount} / ${allResponses.length}명</span>
+      <span class="q-response-rate">응답 ${yesCount + noCount} / ${total}명</span>
     </div>
-    <div>${body}</div>
+    <div class="advanced-split">
+      <div class="advanced-side yes">
+        <div class="advanced-big">${yesCount}</div>
+        <div class="advanced-name">참석 희망</div>
+        <div class="advanced-pct">${yesPct}%</div>
+      </div>
+      <div class="advanced-divider">vs</div>
+      <div class="advanced-side no">
+        <div class="advanced-big">${noCount}</div>
+        <div class="advanced-name">불참</div>
+        <div class="advanced-pct">${noPct}%</div>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill-yes" style="width:${yesPct}%"></div>
+      <div class="progress-fill-no"  style="width:${noPct}%"></div>
+    </div>
+    ${undecided > 0 ? `<p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px">미응답 ${undecided}명</p>` : ''}
   </div>`
+
+  // 서술형 문항 카드
+  const textQuestions = [
+    { id: 'problem',  label: '해결하고 싶은 문제',              qNum: 'Q2' },
+    { id: 'output',   label: '만들고 싶은 서비스 아웃풋',       qNum: 'Q3' },
+    { id: 'value',    label: '해결하고 싶은 Value',             qNum: 'Q4' },
+    { id: 'scenario', label: '구현하고 싶은 시나리오 / 기능',   qNum: 'Q5' },
+  ]
+
+  const textCards = textQuestions.map(q => {
+    const items = allResponses
+      .map(r => ({ name: r.name ?? '익명', team: r.team ?? '', text: String(r[q.id] ?? '').trim() }))
+      .filter(i => i.text)
+    const body = items.length === 0
+      ? '<p class="no-data">응답 없음</p>'
+      : `<div class="text-responses">${items.map((item, i) =>
+          `<div class="text-response-item">
+            <div class="text-response-num">${i + 1}</div>
+            <div class="text-response-content">
+              <div class="text-respondent">${escHtml(item.name)}${item.team ? ` · ${escHtml(item.team)}` : ''}</div>
+              <div class="text-response-text">${escHtml(item.text)}</div>
+            </div>
+          </div>`).join('')}</div>`
+    return `<div class="analytics-card">
+      <div class="analytics-card-header">
+        <div class="q-meta">
+          <span class="q-badge">${q.qNum}</span>
+          <span class="analytics-q-title">${q.label}</span>
+        </div>
+        <span class="q-response-rate">응답 ${items.length} / ${total}명</span>
+      </div>
+      <div>${body}</div>
+    </div>`
+  }).join('')
+
+  container.innerHTML = advancedCard + textCards
 }
 
 // ── 응답 테이블 ───────────────────────────────────────────────
@@ -312,14 +314,14 @@ function renderTable() {
     pagEl.innerHTML = ''
     return
   }
-  const rows = page.map((r, i) => `<tr>
+  const rows = page.map((r, i) => `<tr class="response-row" data-id="${escHtml(r.id)}" style="cursor:pointer">
     <td class="nowrap">${start + i + 1}</td>
     <td class="nowrap">${escHtml(r.name ?? '—')}</td>
     <td class="nowrap">${escHtml(r.company ?? '—')}</td>
     <td class="nowrap">${escHtml(r.team ?? '—')}</td>
     <td class="nowrap">${escHtml(r.position ?? '—')}</td>
     <td class="nowrap">${escHtml(r.email ?? '—')}</td>
-    <td class="nowrap">${escHtml(r.advanced_course === 'yes' ? '참석 희망' : r.advanced_course === 'no' ? '불참' : '—')}</td>
+    <td class="nowrap">${escHtml(r.advanced_course === 'yes' ? '✅ 참석 희망' : r.advanced_course === 'no' ? '불참' : '—')}</td>
     <td class="nowrap">${r.submittedAt ? r.submittedAt.toDate().toLocaleString('ko-KR') : '—'}</td>
   </tr>`).join('')
   container.innerHTML = `<div class="table-wrapper">
@@ -331,12 +333,118 @@ function renderTable() {
       <tbody>${rows}</tbody>
     </table>
   </div>`
+  container.querySelectorAll('.response-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.dataset.id
+      const r  = allResponses.find(x => x.id === id)
+      if (r) openModal(r)
+    })
+  })
   pagEl.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1)
     .map(p => `<button class="page-btn ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`)
     .join('')
   pagEl.querySelectorAll('.page-btn').forEach(btn => {
     btn.addEventListener('click', () => { currentPage = Number(btn.dataset.page); renderTable() })
   })
+}
+
+// ── 상세 모달 ─────────────────────────────────────────────────
+function openModal(r) {
+  currentModalId = r.id
+  const advanced = r.advanced_course === 'yes' ? '✅ 참석 희망' : r.advanced_course === 'no' ? '불참' : '—'
+  const consent  = (r.privacy_consent ?? []).join(', ') || '—'
+  const time     = r.submittedAt ? r.submittedAt.toDate().toLocaleString('ko-KR') : '—'
+
+  function field(label, value) {
+    return `<div class="modal-field">
+      <div class="modal-field-label">${label}</div>
+      <div class="modal-field-value">${escHtml(String(value || '—'))}</div>
+    </div>`
+  }
+  function textarea(label, value) {
+    return `<div class="modal-field">
+      <div class="modal-field-label">${label}</div>
+      <div class="modal-field-value modal-field-long">${escHtml(String(value || '—'))}</div>
+    </div>`
+  }
+
+  $('modal-body').innerHTML = `
+    <div class="modal-section-title">기본 정보</div>
+    <div class="modal-fields-grid">
+      ${field('성함', r.name)}
+      ${field('소속 회사', r.company)}
+      ${field('팀명', r.team)}
+      ${field('직급/직책', r.position)}
+      ${field('이메일', r.email)}
+    </div>
+    <div class="modal-section-title">과제 내용</div>
+    ${textarea('해결하고 싶은 문제', r.problem)}
+    ${textarea('만들고 싶은 서비스 아웃풋', r.output)}
+    ${textarea('해결하고 싶은 Value', r.value)}
+    ${textarea('서비스 시나리오 / 기능', r.scenario)}
+    <div class="modal-section-title">기타</div>
+    <div class="modal-fields-grid">
+      ${field('심화과정 참석', advanced)}
+      ${field('개인정보 동의', consent)}
+      ${field('제출 시각', time)}
+    </div>`
+  $('detail-modal').hidden = false
+}
+
+function closeModal() {
+  $('detail-modal').hidden = true
+  currentModalId = null
+}
+
+async function deleteResponse(id) {
+  if (!confirm('이 응답을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return
+  try {
+    await deleteDoc(doc(db, 'responses', id))
+    closeModal()
+  } catch (err) {
+    console.error(err)
+    alert('삭제 중 오류가 발생했습니다.')
+  }
+}
+
+function setupModal() {
+  $('modal-close').addEventListener('click', closeModal)
+  $('detail-modal').addEventListener('click', e => {
+    if (e.target === $('detail-modal')) closeModal()
+  })
+  $('modal-delete').addEventListener('click', () => {
+    if (currentModalId) deleteResponse(currentModalId)
+  })
+}
+
+// ── 심화과정 참석자 명단 ──────────────────────────────────────
+function renderAdvancedList() {
+  const container = $('advanced-table-container')
+  const countEl   = $('advanced-count')
+  if (!container || !countEl) return
+  const list = allResponses.filter(r => r.advanced_course === 'yes')
+  countEl.textContent = `${list.length}명`
+  if (list.length === 0) {
+    container.innerHTML = '<p class="no-data">심화과정 참석 희망자가 없습니다.</p>'
+    return
+  }
+  const rows = list.map((r, i) => `<tr>
+    <td class="nowrap">${i + 1}</td>
+    <td class="nowrap">${escHtml(r.name ?? '—')}</td>
+    <td class="nowrap">${escHtml(r.company ?? '—')}</td>
+    <td class="nowrap">${escHtml(r.team ?? '—')}</td>
+    <td class="nowrap">${escHtml(r.position ?? '—')}</td>
+    <td class="nowrap">${escHtml(r.email ?? '—')}</td>
+    <td class="nowrap">${r.submittedAt ? r.submittedAt.toDate().toLocaleString('ko-KR') : '—'}</td>
+  </tr>`).join('')
+  container.innerHTML = `<div class="table-wrapper">
+    <table class="responses-table">
+      <thead><tr>
+        <th>#</th><th>성함</th><th>소속 회사</th><th>팀명</th><th>직급/직책</th><th>이메일</th><th>제출 시각</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`
 }
 
 // ── 내보내기 ──────────────────────────────────────────────────
@@ -384,6 +492,7 @@ async function initAdmin() {
   setupTabs()
   $('logout-btn').addEventListener('click', () => signOut(auth))
   setupExport()
+  setupModal()
   $('response-search').addEventListener('input', applyFilter)
   await renderQR()
   subscribeResponses()

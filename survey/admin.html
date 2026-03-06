@@ -53,6 +53,7 @@
         <li><button class="nav-item active" data-tab="overview"><span class="nav-icon">📊</span> 개요</button></li>
         <li><button class="nav-item" data-tab="analytics"><span class="nav-icon">📈</span> 문항 분석</button></li>
         <li><button class="nav-item" data-tab="responses"><span class="nav-icon">📋</span> 응답 목록</button></li>
+        <li><button class="nav-item" data-tab="advanced"><span class="nav-icon">⭐</span> 심화과정 참석자</button></li>
         <hr class="sidebar-divider" />
         <li><button class="nav-item" data-tab="export"><span class="nav-icon">💾</span> 내보내기</button></li>
       </ul>
@@ -74,9 +75,9 @@
             <div class="stat-sub" id="stat-today-date">—</div>
           </div>
           <div class="stat-card orange">
-            <div class="stat-label">완료율</div>
-            <div class="stat-value" id="stat-completion">—</div>
-            <div class="stat-sub">필수 항목 기준</div>
+            <div class="stat-label">심화과정 참석 희망</div>
+            <div class="stat-value" id="stat-advanced-yes">—</div>
+            <div class="stat-sub">전체 중 참석 예정</div>
           </div>
           <div class="stat-card gray">
             <div class="stat-label">최근 응답</div>
@@ -125,6 +126,19 @@
         </div>
       </section>
 
+      <!-- 심화과정 참석자 -->
+      <section id="tab-advanced" class="tab-content" hidden>
+        <div class="card" style="gap:16px;display:flex;flex-direction:column">
+          <div class="responses-toolbar">
+            <div style="display:flex;align-items:center;gap:12px">
+              <span class="card-title" style="margin:0">⭐ 심화과정(4/13~14) 참석 희망자</span>
+              <span class="response-count" id="advanced-count">0명</span>
+            </div>
+          </div>
+          <div id="advanced-table-container"><p class="no-data">아직 응답이 없습니다.</p></div>
+        </div>
+      </section>
+
       <!-- 내보내기 -->
       <section id="tab-export" class="tab-content" hidden>
         <div class="card">
@@ -153,6 +167,20 @@
       </section>
 
     </main>
+  </div>
+</div>
+
+<!-- 응답 상세 모달 -->
+<div id="detail-modal" class="modal-overlay" hidden>
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">응답 상세</h3>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn-delete" id="modal-delete">🗑 이 응답 삭제</button>
+    </div>
   </div>
 </div>
 
