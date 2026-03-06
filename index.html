@@ -9,17 +9,31 @@
 </head>
 <body>
     <!-- Header -->
-    <header>
+    <header id="main-header">
         <div class="container">
             <div class="header-content">
                 <a href="#" class="logo">
                     <span class="logo-hmg">HMG</span>
                     <span class="logo-learning">Learning Session</span>
                 </a>
-                <a href="/survey/" class="btn btn-outline">참가 신청</a>
+                <nav class="main-nav" id="main-nav">
+                    <a href="#overview" class="nav-link">프로그램 소개</a>
+                    <a href="#program"  class="nav-link">일정</a>
+                    <a href="#faq"      class="nav-link">FAQ</a>
+                    <a href="#guide"    class="nav-link">참가 안내</a>
+                </nav>
+                <div class="header-actions">
+                    <a href="/survey/" class="btn btn-outline">참가 신청</a>
+                    <button class="nav-toggle" id="nav-toggle" aria-label="메뉴 열기">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" aria-label="맨 위로">↑</button>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -296,7 +310,7 @@
     </section>
 
     <!-- Program Schedule -->
-    <section style="background: #f7fafc;">
+    <section id="program" style="background: #f7fafc;">
         <div class="container">
             <div class="section-header">
                 <h2>프로그램 <span class="highlight">일정</span></h2>
@@ -495,7 +509,7 @@
     </section>
 
     <!-- FAQ -->
-    <section style="background: white;">
+    <section id="faq" style="background: white;">
         <div class="container">
             <div class="section-header">
                 <h2>자주 묻는 <span class="highlight">질문</span></h2>
@@ -531,7 +545,7 @@
     </section>
 
     <!-- Participation Guide -->
-    <section style="background: #f7fafc;">
+    <section id="guide" style="background: #f7fafc;">
         <div class="container">
             <div class="section-header">
                 <h2>참가 <span class="highlight">안내</span></h2>
