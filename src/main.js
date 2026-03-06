@@ -64,114 +64,176 @@ function initNeuralNetwork() {
   resize()
   window.addEventListener('resize', resize)
 
-  // Node definitions — AI/HRD labels + category
-  const DEFS = [
-    { label: 'AI',     cat: 'core'  },
-    { label: 'LLM',    cat: 'core'  },
-    { label: 'GPT',    cat: 'core'  },
-    { label: 'ML',     cat: 'core'  },
-    { label: 'NLP',    cat: 'tech'  },
-    { label: 'RAG',    cat: 'tech'  },
-    { label: 'Agent',  cat: 'tech'  },
-    { label: 'API',    cat: 'tech'  },
-    { label: 'SDK',    cat: 'tech'  },
-    { label: 'Cloud',  cat: 'tech'  },
-    { label: 'HRD',    cat: 'hrd'   },
-    { label: 'VoE',    cat: 'hrd'   },
-    { label: 'PRD',    cat: 'hrd'   },
-    { label: 'UX',     cat: 'hrd'   },
-    { label: 'DATA',   cat: 'data'  },
-    { label: 'RPA',    cat: 'data'  },
-    { label: 'Vibe',   cat: 'trend' },
-    { label: 'NoCode', cat: 'trend' },
-  ]
-
-  const CAT_COLOR = {
-    core:  '#5fb1eb',
-    tech:  '#4aecd8',
-    hrd:   '#ffffff',
-    data:  '#c084fc',
-    trend: '#fb923c',
+  // Draw simple line icons inside each node
+  function drawIcon(type, x, y, r) {
+    const s = r * 0.5
+    ctx.save()
+    ctx.translate(x, y)
+    ctx.strokeStyle = 'rgba(74,236,216,0.6)'
+    ctx.lineWidth = 1.1
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    ctx.beginPath()
+    switch (type) {
+      case 'mail':
+        ctx.rect(-s, -s * 0.65, s * 2, s * 1.3)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(-s, -s * 0.65); ctx.lineTo(0, s * 0.15); ctx.lineTo(s, -s * 0.65)
+        break
+      case 'chart':
+        ctx.moveTo(-s * 1.1, s * 0.6); ctx.lineTo(s * 1.1, s * 0.6)
+        ctx.moveTo(-s * 0.65, s * 0.6); ctx.lineTo(-s * 0.65, -s * 0.4)
+        ctx.moveTo(0, s * 0.6); ctx.lineTo(0, s * 0.05)
+        ctx.moveTo(s * 0.65, s * 0.6); ctx.lineTo(s * 0.65, -s * 0.8)
+        break
+      case 'chip':
+        ctx.rect(-s * 0.55, -s * 0.55, s * 1.1, s * 1.1)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.rect(-s * 0.25, -s * 0.25, s * 0.5, s * 0.5)
+        ctx.stroke()
+        ctx.beginPath()
+        // pins
+        ctx.moveTo(-s * 0.55, -s * 0.2); ctx.lineTo(-s * 0.85, -s * 0.2)
+        ctx.moveTo(-s * 0.55,  s * 0.2); ctx.lineTo(-s * 0.85,  s * 0.2)
+        ctx.moveTo( s * 0.55, -s * 0.2); ctx.lineTo( s * 0.85, -s * 0.2)
+        ctx.moveTo( s * 0.55,  s * 0.2); ctx.lineTo( s * 0.85,  s * 0.2)
+        ctx.moveTo(-s * 0.2, -s * 0.55); ctx.lineTo(-s * 0.2, -s * 0.85)
+        ctx.moveTo( s * 0.2, -s * 0.55); ctx.lineTo( s * 0.2, -s * 0.85)
+        ctx.moveTo(-s * 0.2,  s * 0.55); ctx.lineTo(-s * 0.2,  s * 0.85)
+        ctx.moveTo( s * 0.2,  s * 0.55); ctx.lineTo( s * 0.2,  s * 0.85)
+        break
+      case 'cloud':
+        ctx.arc(-s * 0.28, s * 0.1, s * 0.38, Math.PI, Math.PI * 1.75)
+        ctx.arc(0, -s * 0.2, s * 0.46, -Math.PI * 0.78, 0)
+        ctx.arc(s * 0.38, s * 0.1, s * 0.32, -Math.PI * 0.5, Math.PI * 0.5)
+        ctx.lineTo(-s * 0.28, s * 0.42)
+        ctx.arc(-s * 0.28, s * 0.1, s * 0.32, Math.PI * 0.5, Math.PI)
+        break
+      case 'network':
+        ctx.arc(0, -s * 0.55, s * 0.27, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.arc(-s * 0.62, s * 0.4, s * 0.24, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.arc(s * 0.62, s * 0.4, s * 0.24, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(-s * 0.1, -s * 0.3); ctx.lineTo(-s * 0.48, s * 0.22)
+        ctx.moveTo(s * 0.1, -s * 0.3); ctx.lineTo(s * 0.48, s * 0.22)
+        break
+      case 'doc':
+        ctx.rect(-s * 0.65, -s, s * 1.3, s * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(-s * 0.35, -s * 0.35); ctx.lineTo(s * 0.35, -s * 0.35)
+        ctx.moveTo(-s * 0.35, s * 0.05); ctx.lineTo(s * 0.35, s * 0.05)
+        ctx.moveTo(-s * 0.35, s * 0.45); ctx.lineTo(s * 0.1, s * 0.45)
+        break
+      case 'gear':
+        ctx.arc(0, 0, s * 0.5, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.arc(0, 0, s * 0.2, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        for (let i = 0; i < 6; i++) {
+          const a = i * Math.PI / 3
+          ctx.moveTo(Math.cos(a) * s * 0.5, Math.sin(a) * s * 0.5)
+          ctx.lineTo(Math.cos(a) * s * 0.78, Math.sin(a) * s * 0.78)
+        }
+        break
+      case 'link':
+        ctx.arc(0, 0, s * 0.55, 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.arc(0, 0, s * 0.22, 0, Math.PI * 2)
+        break
+    }
+    ctx.stroke()
+    ctx.restore()
   }
 
-  const nodes = DEFS.map(d => {
+  const ICONS = ['mail','chart','chip','cloud','network','doc','gear','link',
+                 'chip','mail','network','chart','cloud','doc','gear','link',
+                 'chip','network','mail','chart','gear','cloud','doc']
+
+  const nodes = ICONS.map(icon => {
     const angle = Math.random() * Math.PI * 2
-    const speed = 0.14 + Math.random() * 0.22
+    const speed = 0.1 + Math.random() * 0.16
     return {
-      ...d,
-      color: CAT_COLOR[d.cat],
-      x: 0.1 * (canvas.width  || 1200) + Math.random() * 0.8 * (canvas.width  || 1200),
-      y: 0.1 * (canvas.height || 700)  + Math.random() * 0.8 * (canvas.height || 700),
+      icon,
+      x: 0.05 * (canvas.width || 1200) + Math.random() * 0.9 * (canvas.width || 1200),
+      y: 0.05 * (canvas.height || 700) + Math.random() * 0.9 * (canvas.height || 700),
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-      r:  4 + Math.random() * 4,
+      r: 15 + Math.random() * 14,
       phase: Math.random() * Math.PI * 2,
     }
   })
 
-  const CONNECT = 200
+  const CONNECT = 210
 
   function draw(ts) {
     const w = canvas.width, h = canvas.height
     const t = ts / 1000
     ctx.clearRect(0, 0, w, h)
 
-    // Move nodes
     for (const n of nodes) {
       n.x += n.vx; n.y += n.vy
       if (n.x < n.r || n.x > w - n.r) { n.vx *= -1; n.x = Math.max(n.r, Math.min(w - n.r, n.x)) }
       if (n.y < n.r || n.y > h - n.r) { n.vy *= -1; n.y = Math.max(n.r, Math.min(h - n.r, n.y)) }
     }
 
-    // Draw edges + data packets
+    // Edges
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const a = nodes[i], b = nodes[j]
         const dx = a.x - b.x, dy = a.y - b.y
         const dist = Math.sqrt(dx * dx + dy * dy)
         if (dist > CONNECT) continue
-        const alpha = (1 - dist / CONNECT) * 0.18
-
+        const alpha = (1 - dist / CONNECT) * 0.22
         ctx.beginPath()
-        ctx.moveTo(a.x, a.y)
-        ctx.lineTo(b.x, b.y)
-        ctx.strokeStyle = `rgba(95,177,235,${alpha})`
-        ctx.lineWidth = 0.8
+        ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y)
+        ctx.strokeStyle = `rgba(74,236,216,${alpha})`
+        ctx.lineWidth = 0.7
         ctx.stroke()
-
-        // Animated data packet along edge
-        const prog = ((t * 0.35) + i * 0.11 + j * 0.07) % 1
-        const px = a.x + (b.x - a.x) * prog
-        const py = a.y + (b.y - a.y) * prog
+        // Data packet
+        const prog = ((t * 0.3) + i * 0.13 + j * 0.07) % 1
         ctx.beginPath()
-        ctx.arc(px, py, 1.2, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(74,236,216,${Math.min(alpha * 3, 0.35)})`
+        ctx.arc(a.x + (b.x - a.x) * prog, a.y + (b.y - a.y) * prog, 1.5, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(74,236,216,${Math.min(alpha * 3, 0.5)})`
         ctx.fill()
       }
     }
 
-    // Draw nodes
+    // Nodes
     for (const n of nodes) {
-      const pulse = 1 + 0.07 * Math.sin(t * 1.7 + n.phase)
+      const pulse = 1 + 0.05 * Math.sin(t * 1.4 + n.phase)
       const r = n.r * pulse
 
-      // Soft glow
-      const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 3)
-      grd.addColorStop(0, n.color + '18')
+      // Glow halo
+      const grd = ctx.createRadialGradient(n.x, n.y, r * 0.4, n.x, n.y, r * 2.3)
+      grd.addColorStop(0, 'rgba(74,236,216,0.1)')
       grd.addColorStop(1, 'transparent')
       ctx.beginPath()
-      ctx.arc(n.x, n.y, r * 3, 0, Math.PI * 2)
+      ctx.arc(n.x, n.y, r * 2.3, 0, Math.PI * 2)
       ctx.fillStyle = grd
       ctx.fill()
 
-      // Node dot
+      // Circle fill
       ctx.beginPath()
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2)
-      ctx.fillStyle = n.color + '55'
+      ctx.fillStyle = 'rgba(8,18,52,0.62)'
       ctx.fill()
-      ctx.strokeStyle = n.color + '66'
-      ctx.lineWidth = 0.8
+      ctx.strokeStyle = 'rgba(74,236,216,0.5)'
+      ctx.lineWidth = 1.2
       ctx.stroke()
+
+      // Icon
+      drawIcon(n.icon, n.x, n.y, r)
     }
 
     requestAnimationFrame(draw)
