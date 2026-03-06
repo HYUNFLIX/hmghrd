@@ -139,7 +139,7 @@ function updateOverviewStats() {
   const total  = allResponses.length
   const today  = countToday(allResponses)
   const last   = allResponses[0]?.submittedAt
-  const filled = allResponses.filter(r => r.name && r.email && r.ai_experience).length
+  const filled = allResponses.filter(r => r.name && r.email && r.advanced_course).length
   $('stat-total').textContent      = String(total)
   $('stat-today').textContent      = String(today)
   $('stat-today-date').textContent = new Date().toLocaleDateString('ko-KR')
@@ -203,11 +203,11 @@ async function renderQR() {
 
 // ── 문항 분석 ─────────────────────────────────────────────────
 const QUESTIONS = [
-  { id: 'position',      label: '직급',              type: 'choice' },
-  { id: 'ai_experience', label: 'AI 업무 경험',       type: 'choice' },
-  { id: 'expectation',   label: '기대하는 것 (복수)', type: 'multi'  },
-  { id: 'ai_tool_level', label: 'AI 도구 활용 수준', type: 'rating' },
-  { id: 'requests',      label: '기타 요청 사항',     type: 'text'   },
+  { id: 'advanced_course', label: '심화 과정 참석 희망',                    type: 'choice' },
+  { id: 'problem',         label: '해결하고 싶은 문제',                      type: 'text'   },
+  { id: 'output',          label: '만들고 싶은 서비스 아웃풋',               type: 'text'   },
+  { id: 'value',           label: '해결하고 싶은 문제 / Value',              type: 'text'   },
+  { id: 'scenario',        label: '구현하고 싶은 시나리오 / 기능',           type: 'text'   },
 ]
 
 function renderAnalytics() {
@@ -291,7 +291,7 @@ function applyFilter() {
   const search = ($('response-search')?.value ?? '').toLowerCase()
   filteredResponses = allResponses.filter(r => {
     if (!search) return true
-    return [r.name, r.department, r.position, r.email, r.requests].join(' ').toLowerCase().includes(search)
+    return [r.name, r.company, r.team, r.position, r.email].join(' ').toLowerCase().includes(search)
   })
   currentPage = 1
   renderTable()
@@ -315,18 +315,18 @@ function renderTable() {
   const rows = page.map((r, i) => `<tr>
     <td class="nowrap">${start + i + 1}</td>
     <td class="nowrap">${escHtml(r.name ?? '—')}</td>
-    <td class="nowrap">${escHtml(r.department ?? '—')}</td>
+    <td class="nowrap">${escHtml(r.company ?? '—')}</td>
+    <td class="nowrap">${escHtml(r.team ?? '—')}</td>
     <td class="nowrap">${escHtml(r.position ?? '—')}</td>
     <td class="nowrap">${escHtml(r.email ?? '—')}</td>
-    <td>${escHtml(r.ai_experience ?? '—')}</td>
-    <td class="nowrap">${escHtml(r.ai_tool_level ?? '—')}</td>
+    <td class="nowrap">${escHtml(r.advanced_course === 'yes' ? '참석 희망' : r.advanced_course === 'no' ? '불참' : '—')}</td>
     <td class="nowrap">${r.submittedAt ? r.submittedAt.toDate().toLocaleString('ko-KR') : '—'}</td>
   </tr>`).join('')
   container.innerHTML = `<div class="table-wrapper">
     <table class="responses-table">
       <thead><tr>
-        <th>#</th><th>이름</th><th>부서/팀</th><th>직급</th><th>이메일</th>
-        <th>AI 경험</th><th>AI 도구 수준</th><th>제출 시각</th>
+        <th>#</th><th>성함</th><th>소속 회사</th><th>팀명</th><th>직급/직책</th><th>이메일</th>
+        <th>심화과정</th><th>제출 시각</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
@@ -342,10 +342,14 @@ function renderTable() {
 // ── 내보내기 ──────────────────────────────────────────────────
 function setupExport() {
   $('export-csv').addEventListener('click', () => {
-    const headers = ['번호', '이름', '부서/팀', '직급', '이메일', 'AI 경험', '기대', 'AI 도구 수준', '요청 사항', '제출 시각']
+    const headers = ['번호', '성함', '소속 회사', '팀명', '직급/직책', '이메일',
+      '해결하고 싶은 문제', '만들고 싶은 서비스 아웃풋', '해결하고 싶은 Value',
+      '서비스 시나리오/기능', '심화과정 참석', '개인정보동의', '제출 시각']
     const rows = allResponses.map((r, i) => [
-      i + 1, r.name ?? '', r.department ?? '', r.position ?? '', r.email ?? '',
-      r.ai_experience ?? '', (r.expectation ?? []).join(' / '), r.ai_tool_level ?? '', r.requests ?? '',
+      i + 1, r.name ?? '', r.company ?? '', r.team ?? '', r.position ?? '', r.email ?? '',
+      r.problem ?? '', r.output ?? '', r.value ?? '', r.scenario ?? '',
+      r.advanced_course === 'yes' ? '참석 희망' : r.advanced_course === 'no' ? '불참' : '',
+      (r.privacy_consent ?? []).join(' / '),
       r.submittedAt ? r.submittedAt.toDate().toLocaleString('ko-KR') : '',
     ])
     const csv = [headers, ...rows]
@@ -361,17 +365,13 @@ function setupExport() {
 
   $('export-summary').addEventListener('click', async () => {
     const total = allResponses.length
-    const lines = [`HMG Learning Session 사전 설문 요약 (총 ${total}명)\n`]
-    lines.push('== AI 경험 ==')
-    const expFreq = {}
-    allResponses.forEach(r => {
-      if (r.ai_experience) expFreq[r.ai_experience] = (expFreq[r.ai_experience] ?? 0) + 1
-    })
-    Object.entries(expFreq).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => lines.push(`  ${k}: ${v}명`))
-    lines.push('\n== AI 도구 수준 ==')
-    const levels = allResponses.map(r => Number(r.ai_tool_level)).filter(v => !isNaN(v) && v > 0)
-    const avg    = levels.length ? (levels.reduce((a, b) => a + b, 0) / levels.length).toFixed(2) : '—'
-    lines.push(`  평균: ${avg} / 5`)
+    const lines = [`AI 기반 솔루션 기획 기본 과정(3/26) 신청 현황 요약 (총 ${total}명)\n`]
+    lines.push('== 심화 과정(4/13~14) 참석 희망 ==')
+    const yesCount = allResponses.filter(r => r.advanced_course === 'yes').length
+    const noCount  = allResponses.filter(r => r.advanced_course === 'no').length
+    lines.push(`  참석 희망: ${yesCount}명`)
+    lines.push(`  불참: ${noCount}명`)
+    lines.push(`  미응답: ${total - yesCount - noCount}명`)
     await navigator.clipboard.writeText(lines.join('\n'))
     const btn = $('export-summary')
     btn.textContent = '✅ 복사됨'
