@@ -1,27 +1,11 @@
-import { db } from '../firebase'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '/src/firebase.js'
+import { collection, addDoc, serverTimestamp } from 'https://esm.sh/firebase@12.10.0/firestore'
 
-// ── 설문 메타데이터 ────────────────────────────────────────────
 const SURVEY_TITLE       = 'AI 기반 솔루션 기획 기본 과정 사전 설문'
 const SURVEY_DESCRIPTION = '3/26(수) 교육 참석에 앞서 간단한 사전 설문을 작성해 주세요.\n응답 내용은 교육 설계에 활용됩니다.'
 const SUBMIT_KEY         = 'hmg-survey-submitted'
 
-// ── 질문 타입 ─────────────────────────────────────────────────
-type QType = 'text' | 'email' | 'select' | 'radio' | 'checkbox' | 'rating' | 'textarea'
-
-interface Question {
-  id:           string
-  type:         QType
-  title:        string
-  description?: string
-  required:     boolean
-  options?:     string[]
-  min?:         number
-  max?:         number
-}
-
-// ── 질문 목록 ─────────────────────────────────────────────────
-const questions: Question[] = [
+const questions = [
   { id: 'name',          type: 'text',     title: '이름',        required: true },
   { id: 'department',    type: 'text',     title: '부서 / 팀',   required: true },
   { id: 'position',      type: 'select',   title: '직급',        required: true,
@@ -36,53 +20,43 @@ const questions: Question[] = [
   { id: 'requests',      type: 'textarea', title: '강사/운영진에게 전달하고 싶은 요청 사항이나 궁금한 점을 자유롭게 적어 주세요.', required: false },
 ]
 
-// ── DOM 헬퍼 ─────────────────────────────────────────────────
-const $ = <T extends Element = Element>(id: string) => document.getElementById(id) as T | null
+const $ = (id) => document.getElementById(id)
 
-// ── 화면 전환 ─────────────────────────────────────────────────
-function showScreen(id: 'loading' | 'already-submitted' | 'success-message' | 'survey-container') {
-  ;['loading', 'already-submitted', 'success-message', 'survey-container'].forEach(s => {
+function showScreen(id) {
+  ['loading', 'already-submitted', 'success-message', 'survey-container'].forEach(s => {
     const el = $(s)
     if (el) el.hidden = s !== id
   })
 }
 
-// ── 질문 렌더링 ───────────────────────────────────────────────
-function renderInput(q: Question): string {
+function renderInput(q) {
   switch (q.type) {
-    case 'text':
-    case 'email':
+    case 'text': case 'email':
       return `<input class="form-input" type="${q.type}" id="q-${q.id}" name="${q.id}" autocomplete="off" />`
-
     case 'select':
       return `<select class="form-select" id="q-${q.id}" name="${q.id}">
         <option value="">선택해 주세요</option>
         ${(q.options ?? []).map(o => `<option value="${o}">${o}</option>`).join('')}
       </select>`
-
     case 'radio':
       return `<div class="options-group">${(q.options ?? []).map(o => `
         <label class="option-item">
           <input class="option-input" type="radio" name="${q.id}" value="${o}" />
           <span class="option-label">${o}</span>
         </label>`).join('')}</div>`
-
     case 'checkbox':
       return `<div class="options-group">${(q.options ?? []).map(o => `
         <label class="option-item">
           <input class="option-input" type="checkbox" name="${q.id}" value="${o}" />
           <span class="option-label">${o}</span>
         </label>`).join('')}</div>`
-
     case 'rating': {
-      const min = q.min ?? 1
-      const max = q.max ?? 5
+      const min = q.min ?? 1, max = q.max ?? 5
       const vals = Array.from({ length: max - min + 1 }, (_, i) => min + i)
       return `<div class="rating-group">${vals.map(v => `
         <input class="rating-input" type="radio" name="${q.id}" id="r-${q.id}-${v}" value="${v}" />
         <label class="rating-label" for="r-${q.id}-${v}">${v}</label>`).join('')}</div>`
     }
-
     case 'textarea':
       return `<textarea class="form-textarea" id="q-${q.id}" name="${q.id}" rows="4"></textarea>`
   }
@@ -103,35 +77,24 @@ function renderQuestions() {
   }).join('')
 }
 
-// ── 값 수집 ───────────────────────────────────────────────────
-function collectValue(q: Question): string | string[] | null {
+function collectValue(q) {
   switch (q.type) {
-    case 'text': case 'email': case 'select': case 'textarea': {
-      const el = document.getElementById(`q-${q.id}`) as HTMLInputElement | null
-      return el?.value.trim() ?? ''
-    }
-    case 'radio': {
-      const el = document.querySelector<HTMLInputElement>(`input[name="${q.id}"]:checked`)
-      return el?.value ?? ''
-    }
-    case 'checkbox': {
-      const els = document.querySelectorAll<HTMLInputElement>(`input[name="${q.id}"]:checked`)
-      return Array.from(els).map(e => e.value)
-    }
-    case 'rating': {
-      const el = document.querySelector<HTMLInputElement>(`input[name="${q.id}"]:checked`)
-      return el?.value ?? ''
-    }
+    case 'text': case 'email': case 'select': case 'textarea':
+      return document.getElementById(`q-${q.id}`)?.value.trim() ?? ''
+    case 'radio':
+      return document.querySelector(`input[name="${q.id}"]:checked`)?.value ?? ''
+    case 'checkbox':
+      return Array.from(document.querySelectorAll(`input[name="${q.id}"]:checked`)).map(e => e.value)
+    case 'rating':
+      return document.querySelector(`input[name="${q.id}"]:checked`)?.value ?? ''
   }
 }
 
-// ── 유효성 검사 ───────────────────────────────────────────────
-function validate(): boolean {
+function validate() {
   let valid = true
   for (const q of questions) {
-    const errEl = $(`err-${q.id}`)
-    const block = $(`block-${q.id}`)
-    const val   = collectValue(q)
+    const errEl = $(`err-${q.id}`), block = $(`block-${q.id}`)
+    const val = collectValue(q)
     let msg = ''
     if (q.required) {
       if (Array.isArray(val) && val.length === 0) msg = '필수 항목입니다.'
@@ -146,8 +109,7 @@ function validate(): boolean {
   return valid
 }
 
-// ── 제출 ─────────────────────────────────────────────────────
-async function handleSubmit(e: Event) {
+async function handleSubmit(e) {
   e.preventDefault()
   const banner = $('error-banner')
   if (banner) banner.hidden = true
@@ -155,15 +117,10 @@ async function handleSubmit(e: Event) {
     document.querySelector('.has-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     return
   }
-  const btn = $<HTMLButtonElement>('submit-btn')
+  const btn = $('submit-btn')
   if (btn) { btn.disabled = true; btn.textContent = '제출 중...' }
-
-  const answers: Record<string, string | string[]> = {}
-  for (const q of questions) {
-    const val = collectValue(q)
-    if (val !== null) answers[q.id] = val
-  }
-
+  const answers = {}
+  for (const q of questions) { const v = collectValue(q); if (v !== null) answers[q.id] = v }
   try {
     await addDoc(collection(db, 'responses'), {
       ...answers,
@@ -180,16 +137,14 @@ async function handleSubmit(e: Event) {
   }
 }
 
-// ── 초기화 ────────────────────────────────────────────────────
 function init() {
   if (localStorage.getItem(SUBMIT_KEY)) { showScreen('already-submitted'); return }
-  const titleEl = $('survey-title')
-  const descEl  = $('survey-description')
+  const titleEl = $('survey-title'), descEl = $('survey-description')
   if (titleEl) titleEl.textContent = SURVEY_TITLE
   if (descEl)  descEl.textContent  = SURVEY_DESCRIPTION
   renderQuestions()
   showScreen('survey-container')
-  $<HTMLFormElement>('survey-form')?.addEventListener('submit', handleSubmit)
+  $('survey-form')?.addEventListener('submit', handleSubmit)
 }
 
 init()
