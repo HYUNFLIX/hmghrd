@@ -19,16 +19,7 @@
     "url": "https://github.com/HYUNFLIX/hmghrd/issues"
   },
   "homepage": "https://github.com/HYUNFLIX/hmghrd#readme",
-  "dependencies": {
-    "firebase": "^12.10.0",
-    "qrcode": "^1.5.3"
-  },
   "devDependencies": {
-    "@types/chart.js": "^2.9.41",
-    "@types/node": "^25.3.3",
-    "@types/qrcode": "^1.5.5",
-    "chart.js": "^4.5.1",
-    "typescript": "^5.9.3",
     "vite": "^7.3.1"
   }
 }
