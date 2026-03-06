@@ -29,16 +29,6 @@
             <div class="floating-orb orb-3"></div>
             <div class="floating-orb orb-4"></div>
             
-            <div class="dot" style="top: 20%; left: 15%; animation-delay: 0s;"></div>
-            <div class="dot" style="top: 35%; left: 80%; animation-delay: 0.5s;"></div>
-            <div class="dot" style="top: 50%; left: 25%; animation-delay: 1s;"></div>
-            <div class="dot" style="top: 65%; left: 70%; animation-delay: 1.5s;"></div>
-            <div class="dot" style="top: 75%; left: 40%; animation-delay: 2s;"></div>
-            <div class="dot" style="top: 25%; left: 55%; animation-delay: 2.5s;"></div>
-            <div class="dot" style="top: 85%; left: 15%; animation-delay: 0.3s;"></div>
-            <div class="dot" style="top: 40%; left: 45%; animation-delay: 1.2s;"></div>
-            <div class="dot" style="top: 60%; left: 90%; animation-delay: 1.8s;"></div>
-            <div class="dot" style="top: 15%; left: 35%; animation-delay: 0.8s;"></div>
         </div>
 
         <div class="container">
@@ -311,100 +301,193 @@
             <div class="section-header">
                 <h2>프로그램 <span class="highlight">일정</span></h2>
                 <div class="underline"></div>
+                <p>단계별 학습 여정으로 AI 네이티브가 되어보세요</p>
             </div>
 
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-date" style="text-align: right;">
-                        <h3>기본 과정</h3>
-                        <p class="date">2026.03.26 (목)</p>
-                        <p style="color: #718096;">Online Live (4H)</p>
-                    </div>
+            <!-- Learning Journey Path -->
+            <div class="journey-path">
+                <div class="journey-step">
+                    <div class="journey-dot active"></div>
+                    <div class="journey-label">신청<br><span>~3/16</span></div>
+                </div>
+                <div class="journey-line"></div>
+                <div class="journey-step">
+                    <div class="journey-dot"></div>
+                    <div class="journey-label">기본 과정<br><span>3/26</span></div>
+                </div>
+                <div class="journey-line"></div>
+                <div class="journey-step">
+                    <div class="journey-dot"></div>
+                    <div class="journey-label">심화 과정<br><span>4/13~14</span></div>
+                </div>
+                <div class="journey-line"></div>
+                <div class="journey-step">
+                    <div class="journey-dot"></div>
+                    <div class="journey-label">AI 솔루션 보유<br><span>After</span></div>
+                </div>
+            </div>
 
-                    <div class="timeline-content">
-                        <h4>HRD AI 기초 역량 강화</h4>
-                        <ul class="module-list">
-                            <li>
-                                <span class="module-title">M1</span> 바이브 코딩 & 일러는 방식의 변화
-                                <span class="module-desc">AI Studio 셋업 및 문서정리-생성-배포 프로세스 이해</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M2</span> [실습 1] 매뉴얼/테넌 검사 도구 만들기
-                                <span class="module-desc">Step-by-Step 따라하기 및 다녀감 실습</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M3</span> [실습 2] 설문 결과 자동 분석 앱
-                                <span class="module-desc">Google Sheets DB 연동 및 데이터 시각화</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M4</span> PRD 작성 가이드 & 과제 안내
-                                <span class="module-desc">실과 과정을 위한 문제정의서(PRD) 작성법</span>
-                            </li>
-                        </ul>
+            <!-- Tab Nav -->
+            <div class="sched-nav">
+                <button class="sched-tab active" data-target="sched-basic">
+                    <div class="sched-tab-badge">01</div>
+                    <div class="sched-tab-info">
+                        <div class="sched-tab-title">기본 과정</div>
+                        <div class="sched-tab-sub">03.26 (목) · Online Live · 4H</div>
+                    </div>
+                    <div class="sched-tab-icon">📡</div>
+                </button>
+                <div class="sched-nav-sep">→</div>
+                <button class="sched-tab" data-target="sched-advanced">
+                    <div class="sched-tab-badge adv">02</div>
+                    <div class="sched-tab-info">
+                        <div class="sched-tab-title">심화 과정</div>
+                        <div class="sched-tab-sub">04.13(월)~14(화) · 마복연수원 · 16H</div>
+                    </div>
+                    <div class="sched-tab-icon">🚀</div>
+                </button>
+            </div>
+
+            <!-- Basic Course -->
+            <div id="sched-basic" class="sched-panel">
+                <div class="sched-panel-header">
+                    <div>
+                        <h3 class="sched-panel-title">HRD AI 기초 역량 강화</h3>
+                        <p class="sched-panel-sub">AI 도구를 처음 접하는 HRD 담당자를 위한 실습 중심 기초 과정 · 13:30~17:30</p>
+                    </div>
+                    <div class="sched-mode-badge online">🖥️ 온라인 라이브</div>
+                </div>
+                <div class="sched-flow">
+                    <div class="scard theory">
+                        <div class="scard-header"><span class="scard-num">M1</span><span class="scard-type theory">이론</span></div>
+                        <div class="scard-emoji">💡</div>
+                        <div class="scard-title">바이브 코딩 & 일하는 방식의 변화</div>
+                        <div class="scard-desc">AI Studio 셋업 및 문서정리-생성-배포 프로세스 이해</div>
+                    </div>
+                    <div class="sflow-arrow">›</div>
+                    <div class="scard practice">
+                        <div class="scard-header"><span class="scard-num">M2</span><span class="scard-type practice">실습</span></div>
+                        <div class="scard-emoji">🛠️</div>
+                        <div class="scard-title">[실습1] 매뉴얼 검사 도구 만들기</div>
+                        <div class="scard-desc">Step-by-Step 따라하기 및 바로 실습</div>
+                    </div>
+                    <div class="sflow-arrow">›</div>
+                    <div class="scard practice">
+                        <div class="scard-header"><span class="scard-num">M3</span><span class="scard-type practice">실습</span></div>
+                        <div class="scard-emoji">📊</div>
+                        <div class="scard-title">[실습2] 설문 결과 자동 분석 앱</div>
+                        <div class="scard-desc">Google Sheets DB 연동 및 데이터 시각화</div>
+                    </div>
+                    <div class="sflow-arrow">›</div>
+                    <div class="scard task">
+                        <div class="scard-header"><span class="scard-num">M4</span><span class="scard-type task">과제</span></div>
+                        <div class="scard-emoji">📝</div>
+                        <div class="scard-title">PRD 작성 가이드 & 과제 안내</div>
+                        <div class="scard-desc">심화 과정을 위한 문제정의서(PRD) 작성법</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Course -->
+            <div id="sched-advanced" class="sched-panel" hidden>
+                <div class="sched-panel-header">
+                    <div>
+                        <h3 class="sched-panel-title">HRD AI 심화 실습 과정</h3>
+                        <p class="sched-panel-sub">팀 단위로 실제 AI 솔루션을 기획·개발·발표하는 2일 집중 해커톤</p>
+                    </div>
+                    <div class="sched-mode-badge offline">🏢 마복연수원</div>
+                </div>
+
+                <div class="sched-day-section">
+                    <div class="sday-header">
+                        <span class="sday-badge">Day 1</span>
+                        <span class="sday-theme">아이디어를 작동하는 프로토타입으로</span>
+                    </div>
+                    <div class="sched-flow">
+                        <div class="scard team">
+                            <div class="scard-header"><span class="scard-num">M1</span><span class="scard-type team">팀빌딩</span></div>
+                            <div class="scard-emoji">👥</div>
+                            <div class="scard-title">팀 구성 & PRD 공유</div>
+                            <div class="scard-desc">아이스브레이킹 및 팀 빌딩</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard design">
+                            <div class="scard-header"><span class="scard-num">M2</span><span class="scard-type design">설계</span></div>
+                            <div class="scard-emoji">📐</div>
+                            <div class="scard-title">PRD 고도화 & 설계</div>
+                            <div class="scard-desc">기능 우선순위 정리 및 와이어프레임 스케치</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard practice">
+                            <div class="scard-header"><span class="scard-num">M3</span><span class="scard-type practice">개발</span></div>
+                            <div class="scard-emoji">💻</div>
+                            <div class="scard-title">Develop ① 핵심 기능 구현</div>
+                            <div class="scard-desc">프롬프트 전략 실전 적용 (큰 그림 → 세부화)</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard practice">
+                            <div class="scard-header"><span class="scard-num">M4</span><span class="scard-type practice">개발</span></div>
+                            <div class="scard-emoji">🔧</div>
+                            <div class="scard-title">Develop ② 기능 확장</div>
+                            <div class="scard-desc">DB 연동 실습 및 디버깅 (MVP 완성)</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard review">
+                            <div class="scard-header"><span class="scard-num">M5</span><span class="scard-type review">회고</span></div>
+                            <div class="scard-emoji">🔄</div>
+                            <div class="scard-title">Day 1 회고</div>
+                            <div class="scard-desc">진행 상황 공유 및 Day 2 역할 설정</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="timeline-item">
-                    <div class="timeline-date">
-                        <h3>심화 과정</h3>
-                        <p class="date">2026.04.13 (월) ~ 14 (화)</p>
-                        <p style="color: #718096;">마복연수원 (16H)</p>
+                <div class="sched-day-section">
+                    <div class="sday-header">
+                        <span class="sday-badge day2">Day 2</span>
+                        <span class="sday-theme">완성하고, 보여주고, 다음을 설계하다</span>
                     </div>
-
-                    <div class="timeline-content">
-                        <h4>HRD AI 심화 실습과정</h4>
-                        
-                        <p class="day-title">Day 1 아이디어를 작동하는 프로토타입으로</p>
-                        <ul class="module-list">
-                            <li>
-                                <span class="module-title">M1</span> 팀 구성 & PRD 공유
-                                <span class="module-desc">아이스브레이킹 및 팀 빌딩</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M2</span> PRD 고도화 & 설계
-                                <span class="module-desc">기능 우선순위 정리 및 아이어프레임 스케치</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M3</span> Develop ① 핵심 기능 구현
-                                <span class="module-desc">프롬프트 전략 실전 적용 (큰 그림 → 세부화)</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M4</span> Develop ② 기능 확장
-                                <span class="module-desc">DB 연동 실습 및 디버깅 (MVP 완성)</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M5</span> Day 1 회고
-                                <span class="module-desc">진행 상황 공유 및 Day 2 역할 설정</span>
-                            </li>
-                        </ul>
-
-                        <p class="day-title">Day 2 완성하고, 보여주고, 다음을 설계하다</p>
-                        <ul class="module-list">
-                            <li>
-                                <span class="module-title">M1</span> Day 2 킥오프
-                                <span class="module-desc">마인드 활업 및 이슈 점검</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M2</span> UI/UX Styling
-                                <span class="module-desc">디자인 시스템 적용 및 반응형 확인</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M3</span> Cloud Deploy
-                                <span class="module-desc">클라우드 배포 및 코드스 테스트</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M4</span> 최종 완성
-                                <span class="module-desc">피드백 반영 및 발표 자료 준비</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M5</span> 결과 발표 & 심사
-                                <span class="module-desc">팀별 발표 및 동료/심사위원 평가</span>
-                            </li>
-                            <li>
-                                <span class="module-title">M6</span> 시상 & Next Step
-                                <span class="module-desc">우수 팀 시상 및 추후 지원 안내</span>
-                            </li>
-                        </ul>
+                    <div class="sched-flow">
+                        <div class="scard theory">
+                            <div class="scard-header"><span class="scard-num">M1</span><span class="scard-type theory">준비</span></div>
+                            <div class="scard-emoji">⚡</div>
+                            <div class="scard-title">Day 2 킥오프</div>
+                            <div class="scard-desc">마인드셋 업 및 이슈 점검</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard design">
+                            <div class="scard-header"><span class="scard-num">M2</span><span class="scard-type design">디자인</span></div>
+                            <div class="scard-emoji">🎨</div>
+                            <div class="scard-title">UI/UX Styling</div>
+                            <div class="scard-desc">디자인 시스템 적용 및 반응형 확인</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard deploy">
+                            <div class="scard-header"><span class="scard-num">M3</span><span class="scard-type deploy">배포</span></div>
+                            <div class="scard-emoji">☁️</div>
+                            <div class="scard-title">Cloud Deploy</div>
+                            <div class="scard-desc">클라우드 배포 및 코드 테스트</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard practice">
+                            <div class="scard-header"><span class="scard-num">M4</span><span class="scard-type practice">완성</span></div>
+                            <div class="scard-emoji">✅</div>
+                            <div class="scard-title">최종 완성</div>
+                            <div class="scard-desc">피드백 반영 및 발표 자료 준비</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard final">
+                            <div class="scard-header"><span class="scard-num">M5</span><span class="scard-type final">발표</span></div>
+                            <div class="scard-emoji">🏆</div>
+                            <div class="scard-title">결과 발표 & 심사</div>
+                            <div class="scard-desc">팀별 발표 및 동료/심사위원 평가</div>
+                        </div>
+                        <div class="sflow-arrow">›</div>
+                        <div class="scard final">
+                            <div class="scard-header"><span class="scard-num">M6</span><span class="scard-type final">시상</span></div>
+                            <div class="scard-emoji">🎯</div>
+                            <div class="scard-title">시상 & Next Step</div>
+                            <div class="scard-desc">우수 팀 시상 및 추후 지원 안내</div>
+                        </div>
                     </div>
                 </div>
             </div>
