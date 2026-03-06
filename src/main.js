@@ -69,8 +69,8 @@ function initNeuralNetwork() {
     const s = r * 0.5
     ctx.save()
     ctx.translate(x, y)
-    ctx.strokeStyle = 'rgba(74,236,216,0.6)'
-    ctx.lineWidth = 1.1
+    ctx.strokeStyle = 'rgba(74,236,216,0.22)'
+    ctx.lineWidth = 0.9
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
     ctx.beginPath()
@@ -169,7 +169,7 @@ function initNeuralNetwork() {
       y: 0.05 * (canvas.height || 700) + Math.random() * 0.9 * (canvas.height || 700),
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-      r: 15 + Math.random() * 14,
+      r: 9 + Math.random() * 8,
       phase: Math.random() * Math.PI * 2,
     }
   })
@@ -194,17 +194,17 @@ function initNeuralNetwork() {
         const dx = a.x - b.x, dy = a.y - b.y
         const dist = Math.sqrt(dx * dx + dy * dy)
         if (dist > CONNECT) continue
-        const alpha = (1 - dist / CONNECT) * 0.22
+        const alpha = (1 - dist / CONNECT) * 0.12
         ctx.beginPath()
         ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y)
         ctx.strokeStyle = `rgba(74,236,216,${alpha})`
-        ctx.lineWidth = 0.7
+        ctx.lineWidth = 0.5
         ctx.stroke()
         // Data packet
         const prog = ((t * 0.3) + i * 0.13 + j * 0.07) % 1
         ctx.beginPath()
-        ctx.arc(a.x + (b.x - a.x) * prog, a.y + (b.y - a.y) * prog, 1.5, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(74,236,216,${Math.min(alpha * 3, 0.5)})`
+        ctx.arc(a.x + (b.x - a.x) * prog, a.y + (b.y - a.y) * prog, 1, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(74,236,216,${Math.min(alpha * 3, 0.28)})`
         ctx.fill()
       }
     }
@@ -216,7 +216,7 @@ function initNeuralNetwork() {
 
       // Glow halo
       const grd = ctx.createRadialGradient(n.x, n.y, r * 0.4, n.x, n.y, r * 2.3)
-      grd.addColorStop(0, 'rgba(74,236,216,0.1)')
+      grd.addColorStop(0, 'rgba(74,236,216,0.04)')
       grd.addColorStop(1, 'transparent')
       ctx.beginPath()
       ctx.arc(n.x, n.y, r * 2.3, 0, Math.PI * 2)
@@ -226,10 +226,10 @@ function initNeuralNetwork() {
       // Circle fill
       ctx.beginPath()
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2)
-      ctx.fillStyle = 'rgba(8,18,52,0.62)'
+      ctx.fillStyle = 'rgba(8,18,52,0.35)'
       ctx.fill()
-      ctx.strokeStyle = 'rgba(74,236,216,0.5)'
-      ctx.lineWidth = 1.2
+      ctx.strokeStyle = 'rgba(74,236,216,0.22)'
+      ctx.lineWidth = 0.8
       ctx.stroke()
 
       // Icon
