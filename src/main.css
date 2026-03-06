@@ -523,6 +523,260 @@ footer .footer-hmg { color: #19263c; }
 footer .footer-hrd { color: #5fb1eb; }
 footer p       { color: #a0aec0; font-size: 0.875rem; }
 
+/* ── Neural Network Canvas ───────────────────────────────────── */
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── Schedule ────────────────────────────────────────────────── */
+/* Journey path */
+.journey-path {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 680px;
+  margin: 0 auto 2.5rem;
+  padding: 0 1rem;
+}
+
+.journey-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.journey-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #cbd5e0;
+  border: 3px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.journey-dot.active {
+  background: #5fb1eb;
+  border-color: #0a3a7a;
+  box-shadow: 0 0 10px rgba(95,177,235,0.6);
+}
+
+.journey-label {
+  font-size: 0.7rem;
+  color: #718096;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.journey-label span { font-weight: 700; color: #5fb1eb; font-size: 0.65rem; display: block; }
+
+.journey-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(95,177,235,0.4), rgba(95,177,235,0.15));
+  margin-bottom: 22px;
+  max-width: 100px;
+}
+
+/* Tab Nav */
+.sched-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.sched-nav-sep {
+  font-size: 1.4rem;
+  color: #cbd5e0;
+  flex-shrink: 0;
+}
+
+.sched-tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  min-width: 230px;
+  font-family: inherit;
+}
+
+.sched-tab:hover { border-color: #5fb1eb; box-shadow: 0 4px 14px rgba(95,177,235,0.15); }
+
+.sched-tab.active {
+  border-color: #0a3a7a;
+  background: #f0f7ff;
+  box-shadow: 0 4px 16px rgba(10,58,122,0.12);
+}
+
+.sched-tab-badge {
+  width: 40px;
+  height: 40px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #718096;
+  flex-shrink: 0;
+}
+
+.sched-tab.active .sched-tab-badge { background: #0a3a7a; color: white; }
+.sched-tab-badge.adv { background: #e8f5e9; color: #2e7d32; }
+.sched-tab.active .sched-tab-badge.adv { background: #2e7d32; color: white; }
+
+.sched-tab-info  { flex: 1; }
+.sched-tab-title { font-size: 0.92rem; font-weight: 700; color: #2d3748; margin-bottom: 3px; }
+.sched-tab-sub   { font-size: 0.72rem; color: #718096; }
+.sched-tab-icon  { font-size: 1.3rem; flex-shrink: 0; }
+
+/* Panel */
+.sched-panel {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+  padding: 28px;
+  overflow: hidden;
+}
+
+.sched-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.sched-panel-title { font-size: 1.2rem; font-weight: 700; color: #0a3a7a; margin-bottom: 5px; }
+.sched-panel-sub   { font-size: 0.82rem; color: #718096; }
+
+.sched-mode-badge {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sched-mode-badge.online  { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.sched-mode-badge.offline { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+/* Flow */
+.sched-flow {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex-wrap: wrap;
+  row-gap: 12px;
+}
+
+.sflow-arrow {
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 1.4rem;
+  color: #cbd5e0;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* Module Cards */
+.scard {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 14px 16px;
+  min-width: 148px;
+  flex: 1;
+  max-width: 190px;
+  border-top: 4px solid #e2e8f0;
+  transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+
+.scard:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+.scard.theory   { border-top-color: #5fb1eb; }
+.scard.practice { border-top-color: #22c55e; }
+.scard.task     { border-top-color: #f59e0b; }
+.scard.team     { border-top-color: #ec4899; }
+.scard.design   { border-top-color: #a78bfa; }
+.scard.deploy   { border-top-color: #f97316; }
+.scard.review   { border-top-color: #94a3b8; }
+.scard.final    { border-top-color: #ef4444; }
+
+.scard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.scard-num { font-size: 0.68rem; font-weight: 800; color: #a0aec0; letter-spacing: 0.05em; }
+
+.scard-type {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 8px;
+}
+
+.scard-type.theory   { background: #eff6ff; color: #1d4ed8; }
+.scard-type.practice { background: #f0fdf4; color: #16a34a; }
+.scard-type.task     { background: #fffbeb; color: #d97706; }
+.scard-type.team     { background: #fdf2f8; color: #be185d; }
+.scard-type.design   { background: #faf5ff; color: #7c3aed; }
+.scard-type.deploy   { background: #fff7ed; color: #c2410c; }
+.scard-type.review   { background: #f8fafc; color: #64748b; }
+.scard-type.final    { background: #fff1f2; color: #be123c; }
+
+.scard-emoji { font-size: 1.6rem; margin-bottom: 8px; line-height: 1; }
+.scard-title { font-size: 0.82rem; font-weight: 700; color: #2d3748; line-height: 1.4; margin-bottom: 5px; }
+.scard-desc  { font-size: 0.72rem; color: #718096; line-height: 1.45; }
+
+/* Day Sections */
+.sched-day-section { margin-bottom: 24px; }
+.sched-day-section:last-child { margin-bottom: 0; }
+
+.sday-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 10px 16px;
+  background: #f7fafc;
+  border-radius: 8px;
+  border-left: 4px solid #0a3a7a;
+}
+
+.sday-badge {
+  background: #0a3a7a;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.sday-badge.day2 { background: #5fb1eb; }
+.sday-theme { font-size: 0.88rem; font-weight: 600; color: #4a5568; }
+
 /* ── Countdown ───────────────────────────────────────────────── */
 .countdown-wrapper {
   margin: 2rem auto 0;
@@ -585,4 +839,8 @@ footer p       { color: #a0aec0; font-size: 0.875rem; }
   .why-content        { grid-template-columns: 1fr; }
   .countdown-value    { font-size: 1.5rem; }
   .countdown-box      { min-width: 2.5rem; }
+  .sched-tab          { min-width: 0; flex: 1; }
+  .sched-nav-sep      { display: none; }
+  .scard              { min-width: 130px; max-width: 160px; }
+  .journey-line       { max-width: 60px; }
 }

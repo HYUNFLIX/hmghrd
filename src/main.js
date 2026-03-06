@@ -46,54 +46,158 @@ function initCountdown() {
   tick()
 }
 
-// ── Dynamic floating dots ─────────────────────────────────────
-function initParticles() {
+// ── Neural Network Canvas ──────────────────────────────────────
+function initNeuralNetwork() {
   const heroBg = document.querySelector('.hero .hero-bg')
   if (!heroBg) return
-
-  // Remove statically positioned dots from HTML; generate them via JS
   heroBg.querySelectorAll('.dot').forEach(d => d.remove())
 
-  const COUNT = 14
-  const particles = []
+  const canvas = document.createElement('canvas')
+  canvas.id = 'hero-canvas'
+  heroBg.appendChild(canvas)
+  const ctx = canvas.getContext('2d')
 
-  for (let i = 0; i < COUNT; i++) {
-    const el = document.createElement('div')
-    el.className = 'dot'
-    heroBg.appendChild(el)
+  function resize() {
+    canvas.width  = heroBg.offsetWidth  || window.innerWidth
+    canvas.height = heroBg.offsetHeight || window.innerHeight
+  }
+  resize()
+  window.addEventListener('resize', resize)
 
-    const size = 4 + Math.random() * 4          // 4–8 px
-    const speed = 0.018 + Math.random() * 0.028 // % per frame
+  // Node definitions — AI/HRD labels + category
+  const DEFS = [
+    { label: 'AI',     cat: 'core'  },
+    { label: 'LLM',    cat: 'core'  },
+    { label: 'GPT',    cat: 'core'  },
+    { label: 'ML',     cat: 'core'  },
+    { label: 'NLP',    cat: 'tech'  },
+    { label: 'RAG',    cat: 'tech'  },
+    { label: 'Agent',  cat: 'tech'  },
+    { label: 'API',    cat: 'tech'  },
+    { label: 'SDK',    cat: 'tech'  },
+    { label: 'Cloud',  cat: 'tech'  },
+    { label: 'HRD',    cat: 'hrd'   },
+    { label: 'VoE',    cat: 'hrd'   },
+    { label: 'PRD',    cat: 'hrd'   },
+    { label: 'UX',     cat: 'hrd'   },
+    { label: 'DATA',   cat: 'data'  },
+    { label: 'RPA',    cat: 'data'  },
+    { label: 'Vibe',   cat: 'trend' },
+    { label: 'NoCode', cat: 'trend' },
+  ]
+
+  const CAT_COLOR = {
+    core:  '#5fb1eb',
+    tech:  '#4aecd8',
+    hrd:   '#ffffff',
+    data:  '#c084fc',
+    trend: '#fb923c',
+  }
+
+  const nodes = DEFS.map(d => {
     const angle = Math.random() * Math.PI * 2
-
-    el.style.width  = size + 'px'
-    el.style.height = size + 'px'
-    el.style.opacity = (0.25 + Math.random() * 0.45).toFixed(2)
-
-    particles.push({
-      el,
-      x: Math.random() * 98,
-      y: Math.random() * 98,
+    const speed = 0.14 + Math.random() * 0.22
+    return {
+      ...d,
+      color: CAT_COLOR[d.cat],
+      x: 0.1 * (canvas.width  || 1200) + Math.random() * 0.8 * (canvas.width  || 1200),
+      y: 0.1 * (canvas.height || 700)  + Math.random() * 0.8 * (canvas.height || 700),
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
-    })
-  }
-
-  function animate() {
-    for (const p of particles) {
-      p.x += p.vx
-      p.y += p.vy
-
-      if (p.x <= 0 || p.x >= 99) { p.vx *= -1; p.x = Math.max(0, Math.min(99, p.x)) }
-      if (p.y <= 0 || p.y >= 99) { p.vy *= -1; p.y = Math.max(0, Math.min(99, p.y)) }
-
-      p.el.style.left = p.x + '%'
-      p.el.style.top  = p.y + '%'
+      r:  20 + Math.random() * 10,
+      phase: Math.random() * Math.PI * 2,
     }
-    requestAnimationFrame(animate)
+  })
+
+  const CONNECT = 200
+
+  function draw(ts) {
+    const w = canvas.width, h = canvas.height
+    const t = ts / 1000
+    ctx.clearRect(0, 0, w, h)
+
+    // Move nodes
+    for (const n of nodes) {
+      n.x += n.vx; n.y += n.vy
+      if (n.x < n.r || n.x > w - n.r) { n.vx *= -1; n.x = Math.max(n.r, Math.min(w - n.r, n.x)) }
+      if (n.y < n.r || n.y > h - n.r) { n.vy *= -1; n.y = Math.max(n.r, Math.min(h - n.r, n.y)) }
+    }
+
+    // Draw edges + data packets
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j]
+        const dx = a.x - b.x, dy = a.y - b.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist > CONNECT) continue
+        const alpha = (1 - dist / CONNECT) * 0.28
+
+        ctx.beginPath()
+        ctx.moveTo(a.x, a.y)
+        ctx.lineTo(b.x, b.y)
+        ctx.strokeStyle = `rgba(95,177,235,${alpha})`
+        ctx.lineWidth = alpha * 2.5
+        ctx.stroke()
+
+        // Animated data packet along edge
+        const prog = ((t * 0.45) + i * 0.11 + j * 0.07) % 1
+        const px = a.x + (b.x - a.x) * prog
+        const py = a.y + (b.y - a.y) * prog
+        ctx.beginPath()
+        ctx.arc(px, py, 2, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(74,236,216,${Math.min(alpha * 4, 0.8)})`
+        ctx.fill()
+      }
+    }
+
+    // Draw nodes
+    for (const n of nodes) {
+      const pulse = 1 + 0.07 * Math.sin(t * 1.7 + n.phase)
+      const r = n.r * pulse
+
+      // Glow halo
+      const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 2.4)
+      grd.addColorStop(0, n.color + '22')
+      grd.addColorStop(1, 'transparent')
+      ctx.beginPath()
+      ctx.arc(n.x, n.y, r * 2.4, 0, Math.PI * 2)
+      ctx.fillStyle = grd
+      ctx.fill()
+
+      // Node circle
+      ctx.beginPath()
+      ctx.arc(n.x, n.y, r, 0, Math.PI * 2)
+      ctx.fillStyle = 'rgba(10,26,77,0.72)'
+      ctx.fill()
+      ctx.strokeStyle = n.color + '99'
+      ctx.lineWidth = 1.5
+      ctx.stroke()
+
+      // Label
+      ctx.font = `700 ${Math.round(r * 0.5)}px Inter,system-ui,sans-serif`
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillStyle = n.color
+      ctx.fillText(n.label, n.x, n.y)
+    }
+
+    requestAnimationFrame(draw)
   }
-  animate()
+  requestAnimationFrame(draw)
+}
+
+// ── Schedule Tabs ─────────────────────────────────────────────
+function initScheduleTabs() {
+  document.querySelectorAll('.sched-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.sched-tab').forEach(t => t.classList.remove('active'))
+      tab.classList.add('active')
+      const target = tab.dataset.target
+      document.querySelectorAll('.sched-panel').forEach(p => { p.hidden = p.id !== target })
+    })
+  })
 }
 
 initCountdown()
-initParticles()
+initNeuralNetwork()
+initScheduleTabs()

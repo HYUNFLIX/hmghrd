@@ -623,9 +623,205 @@ body {
   color: var(--error);
 }
 
+/* ── Excel button ───────────────────────────────────────────── */
+.btn-excel { background: #1d6f42; color: #fff; flex: none; white-space: nowrap; }
+.btn-excel:hover { opacity: 0.85; }
+
+/* ── Report ─────────────────────────────────────────────────── */
+.report-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.report-document {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+  padding: 48px 56px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.rpt-cover {
+  text-align: center;
+  border-bottom: 3px solid var(--brand-blue);
+  padding-bottom: 32px;
+  margin-bottom: 36px;
+}
+
+.rpt-cover-tag {
+  display: inline-block;
+  background: var(--brand-blue);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.rpt-cover h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--brand-blue);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.rpt-cover-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.rpt-section {
+  margin-bottom: 40px;
+}
+
+.rpt-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--brand-blue);
+  border-left: 4px solid var(--brand-blue);
+  padding-left: 12px;
+  margin-bottom: 18px;
+}
+
+.rpt-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.rpt-stat {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.rpt-stat-val {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--brand-blue);
+  line-height: 1;
+}
+
+.rpt-stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
+
+.rpt-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.rpt-bar-label { font-size: 0.85rem; min-width: 80px; text-align: right; }
+
+.rpt-bar-track {
+  flex: 1;
+  height: 20px;
+  background: #f0f2f5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rpt-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s;
+}
+
+.rpt-bar-pct { font-size: 0.82rem; color: var(--text-muted); min-width: 48px; }
+
+.rpt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.rpt-table th {
+  background: var(--brand-blue);
+  color: #fff;
+  padding: 9px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.rpt-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.rpt-table tr:last-child td { border-bottom: none; }
+.rpt-table tr:nth-child(even) td { background: #f8fafc; }
+
+.rpt-response-item {
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border-left: 3px solid var(--brand-blue-light);
+}
+
+.rpt-response-meta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--brand-blue);
+  margin-bottom: 4px;
+}
+
+.rpt-response-text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.rpt-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  margin-top: 40px;
+}
+
 /* ── Utilities ──────────────────────────────────────────────── */
 .no-data { color: var(--text-muted); font-size: 0.9rem; padding: 20px 0; }
 [hidden]  { display: none !important; }
+
+/* ── Print ──────────────────────────────────────────────────── */
+@media print {
+  body > *:not(#admin-app) { display: none !important; }
+  #admin-app > *:not(.admin-body) { display: none !important; }
+  .admin-sidebar, .admin-header, .report-actions, footer { display: none !important; }
+  .admin-body { display: block !important; }
+  .admin-main { padding: 0 !important; overflow: visible !important; }
+  .tab-content { display: none !important; }
+  #tab-report  { display: block !important; }
+  .report-document {
+    box-shadow: none;
+    padding: 0;
+    max-width: 100%;
+  }
+  .rpt-bar-fill { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .rpt-table th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .rpt-section { page-break-inside: avoid; }
+}
 
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 900px) {

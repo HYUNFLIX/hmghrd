@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https:/
 import { collection, onSnapshot, query, orderBy, deleteDoc, doc } from 'https://esm.sh/firebase@12.10.0/firestore'
 import { Chart, LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler } from 'https://esm.sh/chart.js@4.5.1'
 import QRCode from 'https://esm.sh/qrcode@1.5.3'
+import * as XLSX from 'https://esm.sh/xlsx@0.18.5'
 
 Chart.register(LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler)
 
@@ -108,6 +109,7 @@ function setupTabs() {
       if (tab === 'analytics') renderAnalytics()
       if (tab === 'responses') renderResponsesTable()
       if (tab === 'advanced')  renderAdvancedList()
+      if (tab === 'report')    renderReport()
     })
   })
   $('menu-toggle').addEventListener('click', () => $('sidebar').classList.toggle('open'))
@@ -455,6 +457,191 @@ function renderAdvancedList() {
   </div>`
 }
 
+// ── 심화과정 엑셀 내보내기 ────────────────────────────────────
+function exportAdvancedExcel() {
+  const list = allResponses.filter(r => r.advanced_course === 'yes')
+  if (list.length === 0) { alert('심화과정 참석 희망자가 없습니다.'); return }
+
+  const headers = ['번호', '성함', '소속 회사', '팀명', '직급/직책', '이메일', '제출 시각']
+  const rows = list.map((r, i) => [
+    i + 1,
+    r.name    ?? '',
+    r.company ?? '',
+    r.team    ?? '',
+    r.position ?? '',
+    r.email   ?? '',
+    r.submittedAt ? r.submittedAt.toDate().toLocaleString('ko-KR') : '',
+  ])
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  ws['!cols'] = [4, 10, 14, 14, 12, 22, 18].map(w => ({ wch: w }))
+
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, '심화과정 참석 희망자')
+  XLSX.writeFile(wb, `심화과정_참석자명단_${new Date().toLocaleDateString('ko-KR').replace(/\./g, '').replace(/ /g, '')}.xlsx`)
+}
+
+// ── 보고서 만들기 ─────────────────────────────────────────────
+function renderReport() {
+  const container = $('report-content')
+  if (!container) return
+
+  if (allResponses.length === 0) {
+    container.innerHTML = '<p class="no-data">아직 응답이 없습니다.</p>'
+    return
+  }
+
+  const total        = allResponses.length
+  const advancedYes  = allResponses.filter(r => r.advanced_course === 'yes').length
+  const advancedNo   = allResponses.filter(r => r.advanced_course === 'no').length
+  const undecided    = total - advancedYes - advancedNo
+  const yesPct       = total ? Math.round(advancedYes / total * 100) : 0
+  const noPct        = total ? Math.round(advancedNo  / total * 100) : 0
+  const today        = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
+  const earliest     = allResponses.at(-1)?.submittedAt?.toDate().toLocaleDateString('ko-KR') ?? '—'
+  const latest       = allResponses[0]?.submittedAt?.toDate().toLocaleDateString('ko-KR') ?? '—'
+
+  // 소속사별 집계
+  const companyCounts = {}
+  allResponses.forEach(r => {
+    const c = r.company?.trim() || '미입력'
+    companyCounts[c] = (companyCounts[c] ?? 0) + 1
+  })
+  const companyRows = Object.entries(companyCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([c, n], i) => `<tr>
+      <td>${i + 1}</td>
+      <td>${escHtml(c)}</td>
+      <td>${n}명 (${Math.round(n / total * 100)}%)</td>
+    </tr>`).join('')
+
+  // 심화과정 참석자 명단
+  const advancedList = allResponses.filter(r => r.advanced_course === 'yes')
+  const advancedRows = advancedList.map((r, i) => `<tr>
+    <td>${i + 1}</td>
+    <td>${escHtml(r.name ?? '—')}</td>
+    <td>${escHtml(r.company ?? '—')}</td>
+    <td>${escHtml(r.team ?? '—')}</td>
+    <td>${escHtml(r.position ?? '—')}</td>
+    <td>${escHtml(r.email ?? '—')}</td>
+  </tr>`).join('')
+
+  // 서술형 응답 섹션
+  const textQuestions = [
+    { id: 'problem',  label: 'Q2. 해결하고 싶은 문제' },
+    { id: 'output',   label: 'Q3. 만들고 싶은 서비스 아웃풋' },
+    { id: 'value',    label: 'Q4. 해결하고 싶은 Value' },
+    { id: 'scenario', label: 'Q5. 구현하고 싶은 시나리오 / 기능' },
+  ]
+
+  const textSections = textQuestions.map(q => {
+    const items = allResponses.filter(r => String(r[q.id] ?? '').trim())
+    const answered = items.length
+    const itemsHtml = items.map(r => `
+      <div class="rpt-response-item">
+        <div class="rpt-response-meta">${escHtml(r.name ?? '익명')}${r.company ? ` · ${escHtml(r.company)}` : ''}${r.team ? ` · ${escHtml(r.team)}` : ''}</div>
+        <div class="rpt-response-text">${escHtml(String(r[q.id] ?? '').trim())}</div>
+      </div>`).join('')
+    return `
+      <div class="rpt-section">
+        <div class="rpt-section-title">${q.label} <span style="font-weight:400;font-size:0.82rem;color:#718096">(응답 ${answered}/${total}명)</span></div>
+        ${answered === 0 ? '<p style="color:#718096;font-size:0.85rem">응답 없음</p>' : itemsHtml}
+      </div>`
+  }).join('')
+
+  container.innerHTML = `
+    <!-- 커버 -->
+    <div class="rpt-cover">
+      <div class="rpt-cover-tag">SURVEY REPORT</div>
+      <h1>HMG HRD Hackathon 2026<br>사전설문 결과 보고서</h1>
+      <div class="rpt-cover-meta">
+        <span>보고서 생성일: ${today}</span>
+        <span>응답 기간: ${earliest} ~ ${latest}</span>
+        <span>총 응답: ${total}명</span>
+      </div>
+    </div>
+
+    <!-- 통계 요약 -->
+    <div class="rpt-section">
+      <div class="rpt-section-title">01 응답 현황 요약</div>
+      <div class="rpt-stats-row">
+        <div class="rpt-stat">
+          <div class="rpt-stat-val">${total}</div>
+          <div class="rpt-stat-label">총 응답</div>
+        </div>
+        <div class="rpt-stat">
+          <div class="rpt-stat-val" style="color:#16a34a">${advancedYes}</div>
+          <div class="rpt-stat-label">심화 참석 희망</div>
+        </div>
+        <div class="rpt-stat">
+          <div class="rpt-stat-val" style="color:#6b7280">${advancedNo}</div>
+          <div class="rpt-stat-label">심화 불참</div>
+        </div>
+        <div class="rpt-stat">
+          <div class="rpt-stat-val" style="color:#f59e0b">${undecided}</div>
+          <div class="rpt-stat-label">미응답</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 심화과정 참석 현황 -->
+    <div class="rpt-section">
+      <div class="rpt-section-title">02 심화과정(4/13~14) 참석 의향</div>
+      <div class="rpt-bar-row">
+        <div class="rpt-bar-label">참석 희망</div>
+        <div class="rpt-bar-track">
+          <div class="rpt-bar-fill" style="width:${yesPct}%;background:#16a34a"></div>
+        </div>
+        <div class="rpt-bar-pct">${advancedYes}명 (${yesPct}%)</div>
+      </div>
+      <div class="rpt-bar-row">
+        <div class="rpt-bar-label">불참</div>
+        <div class="rpt-bar-track">
+          <div class="rpt-bar-fill" style="width:${noPct}%;background:#6b7280"></div>
+        </div>
+        <div class="rpt-bar-pct">${advancedNo}명 (${noPct}%)</div>
+      </div>
+      ${undecided > 0 ? `<div class="rpt-bar-row">
+        <div class="rpt-bar-label">미응답</div>
+        <div class="rpt-bar-track">
+          <div class="rpt-bar-fill" style="width:${Math.round(undecided/total*100)}%;background:#f59e0b"></div>
+        </div>
+        <div class="rpt-bar-pct">${undecided}명</div>
+      </div>` : ''}
+    </div>
+
+    <!-- 심화과정 참석자 명단 -->
+    <div class="rpt-section">
+      <div class="rpt-section-title">03 심화과정 참석 희망자 명단 (${advancedYes}명)</div>
+      ${advancedYes === 0
+        ? '<p style="color:#718096;font-size:0.85rem">참석 희망자 없음</p>'
+        : `<table class="rpt-table">
+            <thead><tr><th>#</th><th>성함</th><th>소속 회사</th><th>팀명</th><th>직급/직책</th><th>이메일</th></tr></thead>
+            <tbody>${advancedRows}</tbody>
+          </table>`}
+    </div>
+
+    <!-- 소속사별 현황 -->
+    <div class="rpt-section">
+      <div class="rpt-section-title">04 소속사별 응답 현황</div>
+      <table class="rpt-table">
+        <thead><tr><th>#</th><th>소속 회사</th><th>응답 수</th></tr></thead>
+        <tbody>${companyRows}</tbody>
+      </table>
+    </div>
+
+    <!-- 서술형 응답 -->
+    <div class="rpt-section">
+      <div class="rpt-section-title">05 사전과제 응답 전체</div>
+    </div>
+    ${textSections}
+
+    <div class="rpt-footer">
+      본 보고서는 ${today} 기준으로 자동 생성되었습니다.<br>
+      © 2026 REFERENCE HRD. All Rights Reserved.
+    </div>`
+}
+
 // ── 내보내기 ──────────────────────────────────────────────────
 function setupExport() {
   $('export-csv').addEventListener('click', () => {
@@ -502,6 +689,8 @@ async function initAdmin() {
   setupExport()
   setupModal()
   $('response-search').addEventListener('input', applyFilter)
+  $('export-advanced-excel').addEventListener('click', exportAdvancedExcel)
+  $('print-report').addEventListener('click', () => window.print())
   await renderQR()
   subscribeResponses()
 }
