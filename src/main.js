@@ -175,6 +175,19 @@ function initNeuralNetwork() {
   })
 
   const CONNECT = 210
+  const MOUSE_RADIUS = 120   // 반발 범위
+  const MOUSE_FORCE  = 1.8   // 반발 세기
+  const mouse = { x: -9999, y: -9999 }
+
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect()
+    mouse.x = e.clientX - rect.left
+    mouse.y = e.clientY - rect.top
+  })
+  canvas.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999 })
+
+  // pointer-events 활성화 (canvas는 기본 none)
+  canvas.style.pointerEvents = 'auto'
 
   function draw(ts) {
     const w = canvas.width, h = canvas.height
@@ -182,6 +195,23 @@ function initNeuralNetwork() {
     ctx.clearRect(0, 0, w, h)
 
     for (const n of nodes) {
+      // 마우스 반발력
+      const mdx = n.x - mouse.x
+      const mdy = n.y - mouse.y
+      const mdist = Math.sqrt(mdx * mdx + mdy * mdy)
+      if (mdist < MOUSE_RADIUS && mdist > 0) {
+        const force = (MOUSE_RADIUS - mdist) / MOUSE_RADIUS * MOUSE_FORCE
+        n.vx += (mdx / mdist) * force * 0.08
+        n.vy += (mdy / mdist) * force * 0.08
+      }
+      // 속도 감쇠 (원래 속도로 서서히 복귀)
+      const baseSpeed = 0.13
+      const speed = Math.sqrt(n.vx * n.vx + n.vy * n.vy)
+      if (speed > baseSpeed) {
+        n.vx *= 0.97
+        n.vy *= 0.97
+      }
+
       n.x += n.vx; n.y += n.vy
       if (n.x < n.r || n.x > w - n.r) { n.vx *= -1; n.x = Math.max(n.r, Math.min(w - n.r, n.x)) }
       if (n.y < n.r || n.y > h - n.r) { n.vy *= -1; n.y = Math.max(n.r, Math.min(h - n.r, n.y)) }
