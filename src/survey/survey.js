@@ -20,7 +20,7 @@ const questions = [
   { type: 'info',
     content: '본 과정은 본인의 현업 문제에 적용할 수 있는 아이디어를 기획하고 실제 구현해보는 PBL(Problem Based Learning) 형태의 교육입니다. 본 과정을 더 의미있게 진행하기 위해 본인의 평소 고민을 담아 최대한 자세히 작성해주세요.' },
   { id: 'problem',         type: 'textarea', title: '본인이 이번 프로젝트를 통해서 해결하고 싶거나 향상시키고 싶은 문제를 작성해주세요.', required: true },
-  { id: 'output',          type: 'textarea', title: 'AI 바이브코딩 과정을 통해 만들고 싶은 서비스의 아웃풋(구체적 이미지)를 작성해주세요.', required: false },
+  { id: 'output',          type: 'textarea', title: 'AI 바이브코딩 과정을 통해 만들고 싶은 서비스의 아웃풋(구체적 이미지)를 작성해주세요.', required: true },
   { id: 'value',           type: 'textarea', title: '이를 통해 해결하고 싶은 문제나 Value가 무엇인지 작성해주세요.',        required: true },
   { id: 'scenario',        type: 'textarea', title: '구현하고 싶은 서비스 시나리오나 기능에 대해 작성해주세요',             required: true },
   { id: 'advanced_course', type: 'radio',    title: '이후 실제 프로토타입 구현을 위한 심화 과정(4/13~14, 16h, 오프라인)까지 참석하기 원하시나요?', required: true,
@@ -71,7 +71,8 @@ function renderQuestions() {
   const container = $('questions')
   if (!container) return
   let qNum = 0
-  container.innerHTML = questions.map(q => {
+  const requiredNote = '<p class="required-note"><span class="required-mark">*</span> 표시는 필수 항목입니다.</p>'
+  container.innerHTML = requiredNote + questions.map(q => {
     // Info notice block (not a question)
     if (q.type === 'info') {
       return `<div class="info-block">

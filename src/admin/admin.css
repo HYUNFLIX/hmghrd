@@ -426,6 +426,184 @@ body {
 .btn-export.json  { background: var(--warning); color: #fff; }
 .btn-export.copy  { background: var(--brand-blue); color: #fff; }
 
+/* ── Analytics: advanced_course split ──────────────────────── */
+.advanced-split {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin: 8px 0 16px;
+}
+
+.advanced-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.advanced-big {
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.advanced-side.yes .advanced-big { color: var(--success); }
+.advanced-side.no  .advanced-big { color: var(--text-muted); }
+
+.advanced-name { font-size: 0.88rem; color: var(--text-muted); font-weight: 500; }
+.advanced-pct  { font-size: 1rem; font-weight: 700; }
+.advanced-side.yes .advanced-pct { color: var(--success); }
+
+.advanced-divider {
+  font-size: 0.9rem;
+  color: var(--border);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.progress-track {
+  display: flex;
+  height: 10px;
+  background: var(--brand-blue-light);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progress-fill-yes { background: var(--success); height: 100%; transition: width 0.5s; }
+.progress-fill-no  { background: #d1d5db;         height: 100%; transition: width 0.5s; }
+
+/* ── Analytics: text responses with respondent name ─────────── */
+.text-respondent {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--brand-blue);
+  margin-bottom: 4px;
+}
+
+.text-response-text { font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; }
+
+/* ── Modal ──────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-box {
+  background: var(--surface);
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 640px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.modal-title { font-size: 1.05rem; font-weight: 700; color: var(--brand-blue); }
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.modal-close:hover { background: var(--brand-blue-light); color: var(--brand-blue); }
+
+.modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 16px 0 10px;
+}
+
+.modal-section-title:first-child { margin-top: 0; }
+
+.modal-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modal-field {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.modal-field-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.modal-field-value {
+  font-size: 0.92rem;
+  color: var(--text);
+  word-break: break-all;
+}
+
+.modal-field-long {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+  font-size: 0.88rem;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.btn-delete {
+  padding: 9px 18px;
+  background: #fef2f2;
+  color: var(--error);
+  border: 1.5px solid #fecaca;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-delete:hover { background: #fee2e2; border-color: var(--error); }
+
 /* ── Utilities ──────────────────────────────────────────────── */
 .no-data { color: var(--text-muted); font-size: 0.9rem; padding: 20px 0; }
 [hidden]  { display: none !important; }
