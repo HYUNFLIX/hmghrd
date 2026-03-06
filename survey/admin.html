@@ -54,6 +54,7 @@
         <li><button class="nav-item" data-tab="analytics"><span class="nav-icon">📈</span> 문항 분석</button></li>
         <li><button class="nav-item" data-tab="responses"><span class="nav-icon">📋</span> 응답 목록</button></li>
         <li><button class="nav-item" data-tab="advanced"><span class="nav-icon">⭐</span> 심화과정 참석자</button></li>
+        <li><button class="nav-item" data-tab="report"><span class="nav-icon">📄</span> 보고서 만들기</button></li>
         <hr class="sidebar-divider" />
         <li><button class="nav-item" data-tab="export"><span class="nav-icon">💾</span> 내보내기</button></li>
       </ul>
@@ -134,8 +135,19 @@
               <span class="card-title" style="margin:0">⭐ 심화과정(4/13~14) 참석 희망자</span>
               <span class="response-count" id="advanced-count">0명</span>
             </div>
+            <button class="btn-sm btn-excel" id="export-advanced-excel">📥 엑셀 다운로드</button>
           </div>
           <div id="advanced-table-container"><p class="no-data">아직 응답이 없습니다.</p></div>
+        </div>
+      </section>
+
+      <!-- 보고서 만들기 -->
+      <section id="tab-report" class="tab-content" hidden>
+        <div class="report-actions">
+          <button class="btn-sm btn-blue" id="print-report">🖨️ 인쇄 / PDF 저장</button>
+        </div>
+        <div id="report-content" class="report-document">
+          <p class="no-data">보고서를 생성하는 중...</p>
         </div>
       </section>
 
