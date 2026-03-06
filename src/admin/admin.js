@@ -323,21 +323,29 @@ function renderTable() {
     <td class="nowrap">${escHtml(r.email ?? '—')}</td>
     <td class="nowrap">${escHtml(r.advanced_course === 'yes' ? '✅ 참석 희망' : r.advanced_course === 'no' ? '불참' : '—')}</td>
     <td class="nowrap">${r.submittedAt ? r.submittedAt.toDate().toLocaleString('ko-KR') : '—'}</td>
+    <td class="nowrap"><button class="btn-row-delete" data-id="${escHtml(r.id)}">🗑</button></td>
   </tr>`).join('')
   container.innerHTML = `<div class="table-wrapper">
     <table class="responses-table">
       <thead><tr>
         <th>#</th><th>성함</th><th>소속 회사</th><th>팀명</th><th>직급/직책</th><th>이메일</th>
-        <th>심화과정</th><th>제출 시각</th>
+        <th>심화과정</th><th>제출 시각</th><th></th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
   </div>`
   container.querySelectorAll('.response-row').forEach(row => {
-    row.addEventListener('click', () => {
+    row.addEventListener('click', e => {
+      if (e.target.closest('.btn-row-delete')) return
       const id = row.dataset.id
       const r  = allResponses.find(x => x.id === id)
       if (r) openModal(r)
+    })
+  })
+  container.querySelectorAll('.btn-row-delete').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation()
+      deleteResponse(btn.dataset.id)
     })
   })
   pagEl.innerHTML = Array.from({ length: totalPages }, (_, i) => i + 1)

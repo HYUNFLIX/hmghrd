@@ -604,6 +604,25 @@ body {
 
 .btn-delete:hover { background: #fee2e2; border-color: var(--error); }
 
+/* ── Table row delete button ────────────────────────────────── */
+.btn-row-delete {
+  padding: 4px 8px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+
+.btn-row-delete:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: var(--error);
+}
+
 /* ── Utilities ──────────────────────────────────────────────── */
 .no-data { color: var(--text-muted); font-size: 0.9rem; padding: 20px 0; }
 [hidden]  { display: none !important; }
