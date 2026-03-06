@@ -531,6 +531,7 @@ function download(content, filename, type) {
 // ── Firebase Auth 상태 감지 ───────────────────────────────────
 function setupAuthState() {
   onAuthStateChanged(auth, user => {
+    console.log('Auth 상태 변경:', user ? user.email : 'null');
     if (user) {
       $('login-screen').hidden = true;
       $('admin-app').hidden    = false;
@@ -555,10 +556,14 @@ function setupLogin() {
     btn.disabled = true;
     btn.textContent = '로그인 중...';
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      console.log('로그인 성공:', result.user?.email);
       // 성공 시 onAuthStateChanged가 자동으로 화면 전환
     } catch (err) {
-      errEl.textContent = firebaseErrorMsg(err.code);
+      console.error('로그인 오류:', err.code, err.message, err);
+      const msg = firebaseErrorMsg(err.code) + (err.code ? '' : ` (${err.message})`);
+      errEl.textContent = msg;
+      errEl.style.display = 'block';
       errEl.hidden = false;
       $('password-input').value = '';
       $('password-input').focus();
