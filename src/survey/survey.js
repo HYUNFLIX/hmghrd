@@ -1,4 +1,4 @@
-import { db } from '/src/firebase.js'
+import { db } from '../firebase.js'
 import { collection, addDoc, serverTimestamp } from 'https://esm.sh/firebase@12.10.0/firestore'
 
 const SURVEY_TITLE       = 'AI 기반 솔루션 기획 기본 과정(3/26) 신청서'

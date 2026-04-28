@@ -1,4 +1,4 @@
-import { db, auth } from '/src/firebase.js'
+import { db, auth } from '../firebase.js'
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://esm.sh/firebase@12.10.0/auth'
 import { collection, onSnapshot, query, orderBy, deleteDoc, doc } from 'https://esm.sh/firebase@12.10.0/firestore'
 import { Chart, LineController, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler } from 'https://esm.sh/chart.js@4.5.1'
